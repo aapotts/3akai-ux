@@ -15,7 +15,13 @@
  * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-define(["config/config"], function(config) {
+define(
+    [
+        "config/config",
+        "config/config_custom_oipp"
+    ],
+
+    function(config) {
 
     // Custom CSS Files to load in
     config.skinCSS = ["/dev/skins/default/skin.css"];

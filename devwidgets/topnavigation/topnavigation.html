@@ -126,7 +126,8 @@
                             </li>
                         {/for}
                     </ul>
-                {else}
+                {/if}
+                {if auth.Authentication.internal}
                 <form id="topnavigation_user_options_login_form" method="POST">
                     <div id="topnavigation_user_options_login_fields_container" class="s3d-dropdown-menu-content-container">
                         <div id="topnavigation_user_options_login_error" style="display:none;">
