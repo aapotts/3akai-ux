@@ -147,9 +147,10 @@ require(["jquery", "sakai/sakai.api.core", "jquery-plugins/jquery.fieldselection
 
         var renderUser = function(){
             var externalAuth = false;
-            if (!sakai.config.Authentication.internal && !sakai.config.Authentication.allowInternalAccountCreation) {
-                externalAuth = true;
-            }
+//            if (!sakai.config.Authentication.internal && !sakai.config.Authentication.allowInternalAccountCreation) {
+                externalAuth = ((sakai.config.Authentication.external !== undefined) &&
+                                (sakai.config.Authentication.external.length > 0));
+//            }
             var auth = {
                 "externalAuth": externalAuth,
                 "Authentication": sakai.config.Authentication
