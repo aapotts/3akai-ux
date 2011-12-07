@@ -5,8 +5,8 @@ define(["config/config"], function(config) {
             "allowInternalAccountCreation": false,
             "internal": true,
             "external": [{
-                label: "Login with Shibboleth",
-                url: "http://oipp-test.academic.rsmart.com/system/trustedauth"
+                label: "Student and Faculty Login",
+                url: "/system/trustedauth"
             }],
             "hideLoginOn": ["/dev", "/dev/index.html", "/dev/create_new_account.html"]
         };
