@@ -3,6 +3,8 @@ rSmart 3akai-ux Changelog
 
 oipp-acad-1.0.2-M5-20111216
 ---------------------------
+
+* ACAD-274 altered boolean logic to correct statement that always set debug to true fcd9d30
 * ACAD-475 removed overzealous escaping of userid 7a9d33b
 * ACAD-475 removed overzealous escaping of userid 1c10467
 * NOJIRA acad-1.0.2-M5-20111215 tag e0bec87
