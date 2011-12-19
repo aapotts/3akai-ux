@@ -14,8 +14,8 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
       <groupId>com.rsmart.nakamura</groupId>
-      <artifactId>org.sakaiproject.nakamura.uxloader-wrap</artifactId>
-      <version>1.1</version>
+      <artifactId>com.rsmart.nakamura.uxloader-wrap</artifactId>
+      <version>1.1-M1</version>
       <relativePath>../../pom.xml</relativePath>
     </parent>
     <groupId>org.sakaiproject.nakamura</groupId>
