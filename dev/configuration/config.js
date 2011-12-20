@@ -305,7 +305,6 @@ define(function(){
                                 "errorMessage": "__MSG__PROFILE_BASIC_EMAIL_ERROR__",
                                 "required": true,
                                 "display": false,
-                                "type": "email",
                                 "validation": "email"
                             },
                             "status": {

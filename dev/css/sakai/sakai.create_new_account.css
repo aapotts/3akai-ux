@@ -38,7 +38,7 @@ padding-left:15px;
 }
 #signup_form_container .signup_form_column input {border:1px solid #e0e1e2;height:21px;width:200px;padding:0 5px;color:#333;}
 #signup_form_container .signup_form_column input.username_unavailable_icon {width:185px;padding:0 20px 0 5px;}
-#signup_form_container .signup_form_column select {border:1px solid #e0e1e2;height:23px;width:216px;color:#333;}
+#signup_form_container .signup_form_column select {border:1px solid #e0e1e2;height:23px;width:200px;padding:0 5px;color:#333;}
 #signup_form_container #signup_form_shadow {background:url("/dev/images/signup_form_bgshadow.png") no-repeat scroll left top transparent;height:15px;margin-left:95px;margin-top:-14px;position:absolute;width:700px;}
 #signup_form_container #checkUserName{float:right;margin-top:10px;}
 
@@ -46,10 +46,7 @@ padding-left:15px;
 #signup_form_container .username_available_icon[disabled] {background:url("/dev/images/green_tick.png") no-repeat scroll 194px 4px transparent !important;}
 #signup_form_container .username_unavailable_icon {background:url("/dev/images/red_cross.png") no-repeat scroll 194px 4px #fff;}
 
-.signup_form_error {border:3px solid #ffba00 !important;margin-bottom:5px !important;}
-label.signup_form_error_label{margin:28px 8px 9px 0px !important;}
-
-.create_account_input_error {background:#F9D679;color:#8B6B0A;font-size:11px;padding:4px 0 2px 10px;width:206px;clear:both;}
+.create_account_input_error {background:#cc0000;color:#fff;font-size:11px;padding:4px 0 2px 10px;width:206px;clear:both;}
 
 .captcha_container #save_account {float:right;margin-top:74px;}
 .captcha_container {clear:both;margin:20px 0 0 20px;width:580px;}

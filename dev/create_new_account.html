@@ -42,7 +42,6 @@
         <div class="fl-container-flex">
             <div class="fl-fix fl-centered fixed-container s3d-main-container">
                 <div class="s3d-page-fullcolumn-padding">
-                    <div id="signup_header"></div>
                     <div id="signup_header">
                         <div id="signup_descriptionbox_left" class="signup_descriptionbox">__MSG__SIGN_UP_MESSAGE_1__</div>
                         <div id="signup_descriptionbox_right" class="signup_descriptionbox">__MSG__SIGN_UP_MESSAGE_2__</div>
@@ -159,6 +158,7 @@
                     <div id="password_repeat_empty" style="display:none;">__MSG__PLEASE_REPEART_YOUR_PASSWORD__</div>
                     <div id="password_repeat_nomatch" style="display:none;">__MSG__THIS_PASSWORD_DOES_NOT_MATCH_THE_FIRST_ONE__</div>
 
+<!-- TODO: review before committing merge -->
                     <div class="signup_comment_box">
                         <div class="signup_comment_box_arrow_down"><!----></div>
                         <div class="signup_comment_icon signup_comment_icon_personalspace"><!----></div>
@@ -186,6 +186,7 @@
                         <li><img src="/dev/images/logo_inst_csu.png" alt="__MSG__SIGN_UP_RECOMMEND_INSTITUTION_CSU__"></li>
                         <li><img src="/dev/images/logo_inst_oxford.png" alt="__MSG__SIGN_UP_RECOMMEND_INSTITUTION_OXFORD__"></li>
                     </ul>
+<!-- TODO -->
                 </div>
                 <div class="fl-push fl-widget"><!-- --></div>
             </div>
@@ -196,7 +197,7 @@
 
         <!-- Dependency JS -->
         <script data-main="/dev/lib/sakai/sakai.dependencies.js" src="/dev/lib/jquery/require.js"></script>
-        <script>require(["/dev/javascript/createnewaccount.js", "http://www.google.com/recaptcha/api/js/recaptcha_ajax.js"]);</script>
+        <script>require(["/dev/javascript/createnewaccount.js", "//www.google.com/recaptcha/api/js/recaptcha_ajax.js"]);</script>
         <script type="text/javascript" charset="utf-8">
           var is_ssl = ("https:" == document.location.protocol);
           var asset_host = is_ssl ? "https://s3.amazonaws.com/getsatisfaction.com/" : "http://s3.amazonaws.com/getsatisfaction.com/";

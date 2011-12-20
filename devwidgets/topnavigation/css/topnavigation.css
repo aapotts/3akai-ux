@@ -19,9 +19,9 @@
 
 /* NAVIGATION */
 .topnavigation_help {margin: 0;float:right;}
-.topnavigation_explore {margin: 0 0 0 6px;}
+.topnavigation_explore {margin: 0 0 0 6px;float:left;}
 .topnavigation_explore > li {float:left;}
-.topnavigation_explore li a, .topnavigation_user_container #topnavigation_user_options_name, .topnavigation_user_container #topnavigation_user_options_login, .topnavigation_user_container #topnavigation_user_options_login_external{display:block;padding:7px 25px 10px;color:#fff; text-decoration:none;}
+.topnavigation_explore li a, .topnavigation_user_container #topnavigation_user_options_name, .topnavigation_user_container #topnavigation_user_options_login, .topnavigation_help a, .topnavigation_user_container #topnavigation_user_options_login_external{display:block;padding:7px 25px 10px;color:#fff; text-decoration:none;}
 .topnavigation_explore .hassubnav:hover, .topnavigation_user_container .hassubnav:hover {-moz-border-radius:2px 2px 0 0; border-radius:2px 2px 0 0; -webkit-border-radius:2px 2px 0 0;}
 .topnavigation_explore .topnavigation_close_override, .topnavigation_user_container .topnavigation_close_override {background: none;}
 
@@ -110,7 +110,6 @@
 
 /* Accessibility styles for keyboard navigation */
 #topnavigation_user_options_login, .topnavigation_help{margin:0;background:transparent;border:0;font-weight:bold;font-size:inherit;}
-#topnavigation_user_options_login{margin:0;background:transparent;border:0;font-weight:bold;font-size:inherit;}
 .topnavigation_explore .topnavigation_counts_container button:focus, .topnavigation_explore .s3d-dropdown-menu li a:focus, .topnavigation_user_container .s3d-dropdown-menu li a:focus, #topnavigation_user_options_login li a:focus, #navigation_anon_signup_link:focus{ -moz-border-radius: 2px 2px 2px 2px; background: url("/devwidgets/topnavigation/images/topnav_nav_hover.png") repeat-x scroll left top #3480B2; color:#fff !important;}
 #topnavigation_search_input:focus{outline:2px solid #2683BC;}
 
