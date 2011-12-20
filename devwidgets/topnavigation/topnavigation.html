@@ -129,7 +129,16 @@
                 {/if}
                 {if auth.Authentication.internal}
                 <form id="topnavigation_user_options_login_form" method="POST">
+                    <ul><li>
+                    <a id="topnavigation_toggle_internal" tabindex="0" role="menuitem" href="#"
+                        title="__MSG__GUEST_LOGIN__" class="s3d-bold topnavigation_internal_login_link">__MSG__GUEST_LOGIN__</a>
+                    </li></ul>
+                    {if auth.externalAuth}
+                    <div id="topnavigation_user_options_login_fields_container" class="s3d-dropdown-menu-content-container"
+                            style="display:none;">
+                    {else}
                     <div id="topnavigation_user_options_login_fields_container" class="s3d-dropdown-menu-content-container">
+                    {/if}
                         <div id="topnavigation_user_options_login_error" style="display:none;">
                             <div id="topnavigation_user_options_login_error_icon"></div>
                             <span>__MSG__INVALID_USERNAME_OR_PASSWORD__</span>

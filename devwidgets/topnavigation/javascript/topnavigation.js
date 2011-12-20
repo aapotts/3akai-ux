@@ -476,6 +476,13 @@ require(["jquery", "sakai/sakai.api.core", "jquery-plugins/jquery.fieldselection
          * Add binding to the elements
          */
         var addBinding = function(){
+
+            var toggleLogin = function() {
+                $("#topnavigation_user_options_login_fields_container").toggle();
+            }
+            $("#topnavigation_toggle_internal").unbind ('click', toggleLogin);
+            $("#topnavigation_toggle_internal").bind ('click', toggleLogin);
+
             // Navigation hover binding
             var closeMenu = function(e){
                 if ($openMenu.length){
