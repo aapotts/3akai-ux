@@ -1,6 +1,19 @@
 rSmart 3akai-ux Changelog
 =========================
 
+oipp-acad-1.0.2-M5.1-20111222
+------------------------------
+
+* ACAD-510: repoint OIPP Help button to their support email address 7084807
+* ACAD-509: default all OIPP user-configurable profile areas to share only with authenticated users 28855d2
+* ACAD-508: enable Sakai2 Tools widget for OIPP and rename Sakai CLE Tools 6a6c6bc
+* ACAD-276: adding transparency to OIPP footer logo 84a8875
+* ACAD-276: adding logos for new OIPP OAE skin dbfa29a
+* ACAD-276: Apply New Skin for UC OAE System 1807ec5
+* ACAD-283 moved registration link out of collapsible div from ACAD-279, and revised URL and labels 814633c
+* ACAD-456: configuring OIPP dashboard widgets via custom config b0a3aa8
+* ACAD-279 moved internal login form into a collapsible div 0466fbb
+
 oipp-acad-1.0.2-M5-20111216
 ---------------------------
 
