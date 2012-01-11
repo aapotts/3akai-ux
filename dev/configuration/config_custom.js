@@ -24,7 +24,7 @@ define(
     function(config) {
 
     // Custom CSS Files to load in
-    config.skinCSS = ["/dev/skins/default/skin.css"];
+    config.skinCSS = ["/dev/skins/default/skin.css", "/dev/skins/rsmart/skin.css"];
 
     return config;
 });
