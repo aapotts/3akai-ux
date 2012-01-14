@@ -97,6 +97,8 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
         // templates
         var languagesTemplate = accountPreferences + "_languagesTemplate";
 
+        var $accountpreferences_langloc_settings = $("#accountpreferences_langloc_settings");
+
         var myClose = function(hash) {
             hash.o.remove();
             hash.w.hide();
@@ -105,7 +107,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
         var myShow = function(hash){
             window.scrollTo(0, 0);
             hash.w.show();
-        }
+        };
 
         ///////////////////////
         // Utility functions //
@@ -437,7 +439,10 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                 // if allowpasswordchange is false then hide the regional setting
                 if (!sakai.config.allowPasswordChange) {
                     $(passChangeContainer).hide();
-                }               
+                }
+                if (sakai.config.displayTimezoneAndLanguage) {
+                    $accountpreferences_langloc_settings.show();
+                }
                 updateFooter();
             }
         };

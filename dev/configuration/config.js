@@ -1065,6 +1065,7 @@ define(function(){
         useLiveSakai2Feeds: false,
 
         displayDebugInfo: true,
+        displayTimezoneAndLanguage: true,
 
         /**
          * Section dividers can be added to the directory structure by adding in the following
