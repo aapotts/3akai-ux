@@ -1,6 +1,15 @@
 rSmart 3akai-ux Changelog
 =========================
 
+oipp-acad-1.0.2-M5.2-20120117
+-----------------------------
+
+* ACAD-525 Prevent a 100% width page from floating below the lhnav - Needed to move the addarea widget around to prevent it's styling from being messed up 77db310
+* ACAD-525 Let the content profiles be full-width - Created an rSmart skin css file and moved/centralized full-width customizations there - Updated config_custom.js to load the correct skin file 98cfa94
+* ACAD-599: OIPP Remove Remote Content from User Dashboard (for now) bca64cb
+* ACAD-499 Fix deleting a reply in the discussion widget after it has just been added - This is the diff from https://github.com/sakaiproject/3akai-ux/pull/1476 f8c6f9f
+* ACAD-500 replaced calls to .split("_")[] with .replace(/_chk$/,"") or .replace(/_chkselected$/, "") as needed 83802c3
+
 oipp-acad-1.0.2-M5.1-20111222
 ------------------------------
 
