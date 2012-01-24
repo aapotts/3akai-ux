@@ -240,7 +240,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
          * Change the permission setting for a specific user
          */
         var changePermission = function(){
-            var userid = $(this)[0].id.replace(/_chk$/,"");
+            var userid = $(this)[0].id.replace(/_permissions$/,"");
             selectedUsers[userid].permission = $(this).val();
         };
 
