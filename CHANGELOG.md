@@ -1,6 +1,11 @@
 rSmart 3akai-ux Changelog
 =========================
 
+oipp-acad-1.0.2-M5.3-20120123
+-----------------------------
+
+* ACAD-622 corrected string replace call that was affecting derivation of user ID from <select> element 24401be
+
 oipp-acad-1.0.2-M5.2-20120117
 -----------------------------
 
