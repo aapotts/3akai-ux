@@ -23,6 +23,32 @@ define(["config/config"], function(config) {
     config.displayLanguage = true;
 
     /**
+     * Authentication settings
+     */
+    // config.Authentication.internal = false;
+    // config.Authentication.allowInternalAccountCreation = false;
+    // config.Authentication.internalAndExternal = true;
+
+    /**
+     * Help link
+     */
+     config.Navigation.push({
+         "url": "javascript:;",
+         "id": "help_tab",
+         "anonymous": true,
+         "label": "HELP",
+         "rightLink": true
+     });
+
+     config.Navigation.push({
+         "url": "javascript:;",
+         "id": "help_tab",
+         "anonymous": false,
+         "label": "HELP",
+         "rightLink": true
+     });
+
+    /**
      * Kaltura Settings
      */
     config.kaltura = {
