@@ -70,7 +70,7 @@ label.signup_form_error_label {
 
 /* Overrides for footer.css */
 #footer_logo {
-  background-image: url('/devwidgets/footer/images/footer_logo_rsmart.png') !important;
+  background-image: url('/dev/skins/rsmart/images/footer_logo_rsmart.png') !important;
   width: 110px !important;
   height: 40px !important;
 }
@@ -81,7 +81,7 @@ label.signup_form_error_label {
 
 /* Overrides for institutionalskinning.css */
 .institutionalskinning_widget #institutionalskinning_logo {
-  background-image: url('/devwidgets/institutionalskinning/images/rsmart_liberate_learning.png') !important;
+  background-image: url('/dev/skins/rsmart/images/rsmart_liberate_learning.png') !important;
 }
 
 /* Overrides for sitespages.css */

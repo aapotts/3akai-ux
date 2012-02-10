@@ -684,12 +684,12 @@ define(["config/config"], function(config) {
      */
     config.Authentication.internal = true;
     //config.Authentication.allowInternalAccountCreation = false;
-    config.Authentication.internalAndExternal = true;
+    // config.Authentication.internalAndExternal = true;
 
-    config.Authentication.external = [{
-        label: "Student and Faculty Login",
-        url: "/system/trustedauth"
-    }];
+    // config.Authentication.external = [{
+    //     label: "Student and Faculty Login",
+    //     url: "/system/trustedauth"
+    // }];
 
     /*
      * Configure default user dashboard navigation and widgets.
