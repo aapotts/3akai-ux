@@ -160,3 +160,7 @@ label.signup_form_error_label {
 .rsmart-full-width .addarea_widget .addarea_dropdown_content {
   margin-top: 42px;
 }
+
+.rsmart-full-width #entity_container #entity_group_image.entity_change_avatar .s3d-dropdown-list {
+  z-index:1;
+}
