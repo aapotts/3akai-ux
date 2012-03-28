@@ -502,6 +502,9 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
             handleHashChange(null, {}, {}, all, {}, true);
             $(window).bind("hashchanged.inbox.sakai", handleHashChange);
             $(window).bind(tuid + ".shown.sakai", handleShown);
+            // Add the title key as class to the #inbox_widget div to uniquely
+            // identify this instance of the widget
+            $rootel.find('#inbox_widget').addClass(sakai.api.i18n.General.process(widgetData.title, "noop").toLowerCase());
         };
 
         init();
