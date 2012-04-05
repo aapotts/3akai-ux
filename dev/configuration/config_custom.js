@@ -960,6 +960,7 @@ define(["config/config"], function(config) {
 
     config.emailLocation = 'accountpreferences';
     config.Profile.configuration.defaultConfig.basic.elements.email.display = false;
+    config.emailVerifyEnabled = false;
 
     /**
      * Kaltura Settings
