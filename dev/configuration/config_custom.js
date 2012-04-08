@@ -9,6 +9,7 @@ define(["config/config"], function(config) {
     // Add some custom URLs
     config.URL.SEARCH_USERS_GROUPS_KNOWN = "/var/search/usersgroups-known.json";
     config.URL.USER_EMAIL_EXISTENCE_SERVICE = "/system/userManager/user.emailexists.html?email=__EMAIL__";
+    config.URL.TINY_MCE_CONTENT_CSS += ",/dev/skins/rsmart/skin.css";
 
     // Delete sections we don't want in the default
     delete config.Profile.configuration.defaultConfig.basic.role;
