@@ -497,8 +497,8 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                     theme_advanced_styles: "Regular link=s3d-regular-links",
 
                     // Security
-                    verify_html: true,
-                    cleanup: true,
+                    verify_html: false,
+                    cleanup: false,
                     entity_encoding: "named",
                     invalid_elements: "script",
                     valid_elements: "" +
