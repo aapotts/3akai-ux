@@ -78,6 +78,10 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                 // get the id for the node (list item id)
                 var id = $(this).parent().attr("id").split("/").pop();
                 // unchecked the node
+                // a work-around for using spaces in id
+                if (id.indexOf(" ") > -1) {
+                	id = id.replace(/ /g, '\\ ');
+                }
                 $assignlocationJSTreeContainer.jstree("uncheck_node", $("#"+id));
                 return false;
             });

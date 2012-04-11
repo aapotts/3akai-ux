@@ -2268,46 +2268,56 @@ require(['jquery'], function (jQuery) {
 				else { obj.find("> ul > li").each(function () { _this._repair_state(this); }); }
 			},
 			change_state : function (obj, state, s) {
-                obj = this._get_node(obj);
-                state = (state === false || state === true) ? state : obj.hasClass("jstree-checked");
-                if (state) {
-                        if(s) obj.find("li").andSelf().removeClass("jstree-checked jstree-undetermined").addClass("jstree-unchecked");
-                        else obj.removeClass("jstree-checked jstree-undetermined").addClass("jstree-unchecked");
+                var temp_obj = obj + '';
+				
+				obj = this._get_node(obj);
+				
+				// a work-around for using spaces in id
+                if (!obj && temp_obj.indexOf(" ") > -1) {
+                	obj = this._get_node('#'+temp_obj.replace(/ /g, '\\ '));
+                }                
+                
+                if (obj) {
+	                state = (state === false || state === true) ? state : obj.hasClass("jstree-checked");
+	                if (state) {
+	                        if(s) obj.find("li").andSelf().removeClass("jstree-checked jstree-undetermined").addClass("jstree-unchecked");
+	                        else obj.removeClass("jstree-checked jstree-undetermined").addClass("jstree-unchecked");
+	                }
+	                else {
+	                        if(s) obj.find("li").andSelf().removeClass("jstree-unchecked jstree-undetermined").addClass("jstree-checked");
+	                        else obj.removeClass("jstree-unchecked jstree-undetermined").addClass("jstree-checked");
+	                    if (this.data.ui) {
+	                        this.data.ui.last_selected = obj;
+	                    }
+	                    this.data.checkbox.last_selected = obj;
+	                }
+	                // check and unchecked all the child elements. not necessary if multi_select is false
+	                if (s) {
+	                    obj.parentsUntil(".jstree", "li").each(function(){
+	                        var $this = $(this);
+	                        if (state) {
+	                            if ($this.children("ul").children(".jstree-checked, .jstree-undetermined").length) {
+	                                $this.parentsUntil(".jstree", "li").andSelf().removeClass("jstree-checked jstree-unchecked").addClass("jstree-undetermined");
+	                                return false;
+	                            }
+	                            else {
+	                                $this.removeClass("jstree-checked jstree-undetermined").addClass("jstree-unchecked");
+	                            }
+	                        }
+	                        else {
+	                            if ($this.children("ul").children(".jstree-unchecked, .jstree-undetermined").length) {
+	                                $this.parentsUntil(".jstree", "li").andSelf().removeClass("jstree-checked jstree-unchecked").addClass("jstree-undetermined");
+	                                return false;
+	                            }
+	                            else {
+	                                $this.removeClass("jstree-unchecked jstree-undetermined").addClass("jstree-checked");
+	                            }
+	                        }
+	                    });
+	                }
+	                if(this.data.ui) { this.data.ui.selected = this.get_checked(); }
+					this.__callback(obj);
                 }
-                else {
-                        if(s) obj.find("li").andSelf().removeClass("jstree-unchecked jstree-undetermined").addClass("jstree-checked");
-                        else obj.removeClass("jstree-unchecked jstree-undetermined").addClass("jstree-checked");
-                    if (this.data.ui) {
-                        this.data.ui.last_selected = obj;
-                    }
-                    this.data.checkbox.last_selected = obj;
-                }
-                // check and unchecked all the child elements. not necessary if multi_select is false
-                if (s) {
-                    obj.parentsUntil(".jstree", "li").each(function(){
-                        var $this = $(this);
-                        if (state) {
-                            if ($this.children("ul").children(".jstree-checked, .jstree-undetermined").length) {
-                                $this.parentsUntil(".jstree", "li").andSelf().removeClass("jstree-checked jstree-unchecked").addClass("jstree-undetermined");
-                                return false;
-                            }
-                            else {
-                                $this.removeClass("jstree-checked jstree-undetermined").addClass("jstree-unchecked");
-                            }
-                        }
-                        else {
-                            if ($this.children("ul").children(".jstree-unchecked, .jstree-undetermined").length) {
-                                $this.parentsUntil(".jstree", "li").andSelf().removeClass("jstree-checked jstree-unchecked").addClass("jstree-undetermined");
-                                return false;
-                            }
-                            else {
-                                $this.removeClass("jstree-unchecked jstree-undetermined").addClass("jstree-checked");
-                            }
-                        }
-                    });
-                }
-                if(this.data.ui) { this.data.ui.selected = this.get_checked(); }
-				this.__callback(obj);
 			},
 			check_node : function (obj) {
                 var s = this._get_settings().checkbox;
