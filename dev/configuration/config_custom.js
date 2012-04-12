@@ -12,10 +12,10 @@ define(["config/config"], function(config) {
     config.URL.TINY_MCE_CONTENT_CSS += ",/dev/skins/rsmart/skin.css";
 
     // Delete sections we don't want in the default
-    delete config.Profile.configuration.defaultConfig.basic.role;
-    delete config.Profile.configuration.defaultConfig.basic.department;
-    delete config.Profile.configuration.defaultConfig.basic.college;
-    delete config.Profile.configuration.defaultConfig.aboutme.hobbies;
+    delete config.Profile.configuration.defaultConfig.basic.elements.role;
+    delete config.Profile.configuration.defaultConfig.basic.elements.department;
+    delete config.Profile.configuration.defaultConfig.basic.elements.college;
+    delete config.Profile.configuration.defaultConfig.aboutme.elements.hobbies;
 
     // Modify the orders of the profile sections
     config.Profile.configuration.defaultConfig.aboutme.order = 2;
