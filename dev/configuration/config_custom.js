@@ -4,8 +4,6 @@ define(["config/dynamicconfig"], function(config) {
      * rSmart default customizations
      */
 
-    config.emailverify_disabled = false;
-
     // Add some custom URLs
     config.URL.SEARCH_USERS_GROUPS_KNOWN = "/var/search/usersgroups-known.json";
     config.URL.USER_EMAIL_EXISTENCE_SERVICE = "/system/userManager/user.emailexists.html?email=__EMAIL__";
