@@ -1,23 +1,5 @@
-/*
- * Licensed to the Sakai Foundation (SF) under one
- * or more contributor license agreements. See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership. The SF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- */
 {
     "URL": {
-        // Static URLs
         "GATEWAY_URL": "/",
         "GROUP_DEFAULT_ICON_URL": "/dev/images/group_avatar_icon_64x64_nob.png",
         "GROUP_DEFAULT_ICON_URL_LARGE": "/dev/images/group_avatar_icon_100x100_nob.png",
@@ -34,7 +16,6 @@
         "USER_DEFAULT_ICON_URL_LARGE": "/dev/images/default_User_icon_100x100.png",
         "INFINITE_LOADING_ICON": "/dev/images/Infinite_Scrolling_Loader_v01.gif",
 
-        // Services
         "BATCH": "/system/batch",
         "CAPTCHA_SERVICE": "/system/captcha",
         "CONTACTS_FIND": "/var/contacts/find.json",
@@ -64,7 +45,6 @@
         "WORLD_CREATION_SERVICE": "/system/world/create",
         "WORLD_INFO_URL": "/var/templates/worlds.2.json",
 
-        // Replace these in widgets with proper widgetsave functions from magic
         "SEARCH_ALL_ENTITIES": "/var/search/general.json",
         "SEARCH_ALL_ENTITIES_ALL": "/var/search/general-all.json",
         "SEARCH_ALL_FILES": "/var/search/pool/all.json",
@@ -90,47 +70,31 @@
     "PageTitles": {
         "prefix": "TITLE_PREFIX",
         "pages": {
-            /**  403.html  **/
-            /**  404.html  **/
-            /**  500.html  **/
-            /**  account_preferences.html  **/
             "/dev/account_preferences.html": "ACCOUNT_PREFERENCES",
             "/preferences": "ACCOUNT_PREFERENCES",
-            /**  acknowledgements.html  **/
             "/dev/acknowledgements.html": "ACKNOWLEDGEMENTS",
             "/acknowledgements": "ACKNOWLEDGEMENTS",
-            /**  allcategories.html  **/
             "/categories": "BROWSE_ALL_CATEGORIES",
             "/dev/allcategories.html": "BROWSE_ALL_CATEGORIES",
-            /**  category.html  **/
-            /**  content_profile.html  **/
             "/dev/content_profile.html": "CONTENT_PROFILE",
             "/content": "CONTENT_PROFILE",
-            /**  create_new_account.html  **/
             "/dev/create_new_account.html": "CREATE_A_NEW_ACCOUNT",
             "/register": "CREATE_A_NEW_ACCOUNT",
-            /**  explore.html  **/
             "/": "EXPLORE",
             "/dev": "EXPLORE",
             "/dev/": "EXPLORE",
             "/index.html": "EXPLORE",
             "/dev/explore.html": "EXPLORE",
             "/index": "EXPLORE",
-            /**  logout.html  **/
             "/dev/logout.html": "LOGGING_OUT",
             "/logout": "LOGGING_OUT",
-            /**  search.html  **/
             "/dev/search.html": "SEARCH",
             "/search": "SEARCH",
-            /**  createnew.html  **/
             "/create": "CREATE"
         }
     },
 
     "ErrorPage": {
-        /*
-         * These links are displayed in the 403 and 404 error pages.
-         */
         "Links": {
             "whatToDo": [{
                 "title": "EXPLORE_THE_INSTITUTION",
@@ -156,11 +120,6 @@
     },
 
     "Domain": {
-        /*
-         * These domain labels can be used anywhere on the site (i.e in the video
-         * widget) to convert common domains into shorter, more readable labels
-         * for display purposes.
-         */
         "Labels": {
             "youtube.com": "YouTube",
             "www.youtube.com": "YouTube",
@@ -178,47 +137,29 @@
         "MAX_CORRECT_SEARCH_RESULT_COUNT": 100
     },
 
-    "SakaiDomain": "window.location.protocol + \"//\" + window.location.host",
-
     "Permissions": {
-        /*
-         * A collection of permission keys and range of values to be referenced
-         * for making permissions decisions. The values of properties are only
-         * for reference, may not match designs and are not to be placed in the
-         * UI (message bundles should be used to match up-to-date designs).
-         */
         "Groups": {
             "joinable": {
-                "manager_add": "no", // Managers add people
-                "user_direct": "yes", // People can automatically join
-                "user_request": "withauth" // People request to join
+                "manager_add": "no",
+                "user_direct": "yes",
+                "user_request": "withauth"
             },
             "visible": {
-                "members": "members-only", // Group members only (includes managers)
-                "allusers": "logged-in-only", // All logged in users
-                "public": "public" // Anyone on the Internet
+                "members": "members-only",
+                "allusers": "logged-in-only",
+                "public": "public"
             },
-            "defaultaccess": "public", // public, logged-in-only or members-only (see above for role description)
-            "defaultjoin": "yes" // no, yes, or withauth (see above for descriptions)
+            "defaultaccess": "public",
+            "defaultjoin": "yes"
         },
         "Content": {
-            /*
-             * public - anyone
-             * everyone - logged in users
-             * private - private
-             */
-            "defaultaccess": "public" // public, everyone or private (see above for role description)
+            "defaultaccess": "public"
         },
         "Documents": {
-            /*
-             * public - anyone
-             * everyone - logged in users
-             * private - private
-             */
-            "defaultaccess": "public" // public, everyone or private (see above for role description)
+            "defaultaccess": "public"
         },
         "Links": {
-            "defaultaccess": "public" // public, everyone or private (see above for role description)
+            "defaultaccess": "public"
         },
         "Copyright": {
             "types": {
@@ -248,28 +189,9 @@
     },
 
     "allowPasswordChange": true,
-    /**
-     * Where the email field should live
-     * Default is 'profile' but it can also be 'accountpreferences'
-     *
-     * If you set this to 'accountpreferences', make sure to set the
-     * display property of the email field in the defaultConfig
-     * below to false
-    */
-    "emailLocation": 'profile',
+    "emailLocation": "profile",
 
     "Profile": {
-        /*
-         * This is a collection of profile configuration functions and settings
-         * The structure of the config object is identical to the storage object
-         * When system/me returns profile data for the logged in user the profile_config and profile_data objects could be merged
-         * "label": the internationalizable message for the entry label in HTML
-         * "required": {Boolean} Whether the entry is compulsory or not
-         * "display": {Boolean} Show the entry in the profile or not
-         * "editable": {Boolean} Whether or not the entry is editable
-         * For a date entry field use "date" as the type for MM/dd/yyyy and "dateITA" as the type for dd/MM/yyyy
-         *
-         */
         "configuration": {
 
             "defaultConfig": {
@@ -399,7 +321,6 @@
                     "multiple": true,
                     "multipleLabel": "__MSG__PROFILE_PUBLICATION_LABEL__",
                     "order": 2,
-                    //"template": "profile_section_publications_template",
                     "elements": {
                         "maintitle": {
                             "label": "__MSG__PROFILE_PUBLICATIONS_MAIN_TITLE__",
@@ -464,47 +385,17 @@
                 }
             }
         },
-        /*
-         * set what name to display where only the first name is used
-         */
+
         "userFirstNameDisplay": "firstName",
-
-        /*
-         * set how the user's name is displayed across the entire system
-         * - values can be compound, like "firstName lastName" or singular like "displayName"
-         */
         "userNameDisplay": "firstName lastName",
-
-        /*
-         * the default, if the user doesn't have the userNameDisplay property set in their
-         * profile, use this one.
-         * Note: the value for userNameDisplay and this value can be the same.
-         *       If neither exists, nothing will show
-         */
         "userNameDefaultDisplay": "firstName lastName",
-
-        /*
-         * Set the user's short description to appear underneath their name
-         * in search results
-         */
         "userShortDescription": "${role} in ${department} at ${college}",
         "groupShortDescription": "asdf",
-
-        /*
-         * Set the default user settings in account preferences for automatic tagging
-         * and auto-tagged notifications
-         */
         "defaultAutoTagging": true,
         "defaultSendTagMsg": true
     },
 
     "Groups": {
-        /*
-         * Email message that will be sent to group managers when a user requests
-         * to join their group.
-         * ${user} will be replaced by the name of the requesting user and ${group}
-         * will be replaced with the group name.
-         */
         "JoinRequest": {
             "title": "${user} has requested to join your group: ${group}",
             "body": "${user} has requested to join your group: ${group}. Use the links below to respond to this request."
@@ -512,9 +403,6 @@
     },
 
     "Relationships": {
-        /*
-         * Relationships used by the add contacts widget to define what relationship the contacts can have
-         */
         "contacts": [{
             "name": "__MSG__CLASSMATE__",
             "definition": "__MSG__IS_MY_CLASSMATE__",
@@ -575,12 +463,8 @@
         "reminderIntervalHours": "168"
     },
 
-    // Set this to true if you have an authentication system such as CAS
-    // that needs to redirect the user's browser on logout
     "followLogoutRedirects": false,
 
-    // Set this to the hostname of your CLE instance if you're using CAS
-    // proxy tickets
     "hybridCasHost": false,
 
     "Messages": {
@@ -987,50 +871,20 @@
         }]
     },
 
-    /*
-     * Are anonymous users allowed to browse/search
-     */
     "anonAllowed": true,
-    /*
-     * List of pages that require a logged in user
-     */
     "requireUser": ["/me", "/dev/me.html", "/dev/search_sakai2.html", "/create", "/dev/createnew.html"],
 
-    /*
-     * List of pages that require an anonymous user
-     */
     "requireAnonymous": ["/register", "/dev/create_new_account.html"],
-    /*
-     * List of pages that will be added to requireUser if
-     * anonAllowed is false
-     */
     "requireUserAnonNotAllowed": ["/me", "/dev/me.html", "/dev/search_sakai2.html"],
-    /*
-     * List of pages that will be added to requireAnonymous if
-     * anonAllowed is false
-     */
+
     "requireAnonymousAnonNotAllowed": [],
-    /*
-     * List op pages that require additional processing to determine
-     * whether the page can be shown to the current user. These pages
-     * are then required to call the sakai.api.Security.showPage
-     * themselves
-     */
+
     "requireProcessing": ["/dev/user.html", "/me" ,"/dev/me.html", "/dev/content_profile.html", "/dev/content_profile.html", "/dev/group_edit.html", "/dev/show.html", "/content"],
 
     "showSakai2": false,
     "useLiveSakai2Feeds": false,
-    /*
-     * List of custom CLE Tool names. This can be used to override the translated
-     * tool name in the Sakai 2 Tools Widget drop down, or name a custom CLE tool
-     * that has been added to your CLE installation. You can see the list of
-     * enabled CLE tools at /var/basiclti/cletools.json, and configure them in
-     * Nakamura under the org.sakaiproject.nakamura.basiclti.CLEVirtualToolDataProvider
-     * configuration.
-     */
-    "sakai2ToolNames": {
-        /* "sakai.mytoolId" : "My Custom Tool Title" */
-    },
+
+    "sakai2ToolNames": {},
 
     "displayDebugInfo": true,
     "displayTimezone": true,
@@ -1064,16 +918,6 @@
         "recentchangedcontent"
     ],
 
-
-    /**
-     * Section dividers can be added to the directory structure by adding in the following
-     * element at the appropriate place:
-     *  divider1: {
-     *      "divider": true,
-     *      "title": "Divider title" [optional],
-     *      "cssClass": "CSS class to add to items inside of elements beneath the divider [optional]
-     *  }
-     */
     "Directory": {
         "medicineanddentistry": {
             "title": "__MSG__MEDICINE_AND_DENTISTRY__",
@@ -1572,7 +1416,6 @@
         }
     },
 
-    // Array of css files to load in each page
     "skinCSS": [],
 
     "Languages": [{
@@ -1605,7 +1448,6 @@
         "displayName": "한국어"
     }],
 
-    // Default Language for the deployment, must be one of the language_COUNTRY pairs that exists above
     "defaultLanguage": "en_US",
 
     "defaultUserTemplate": "defaultuser",
@@ -1617,26 +1459,19 @@
     "emailverify_disabled" : false,
 
     "Editor": {
-        "tinymceLanguagePacks": ['ar','ch','en','gl','id','lb','nb','ru','sv','uk','az','cn','eo','gu','is','lt','nl',
-            'sc','ta','ur','be','cs','es','he','it','lv','nn','se','te','vi','bg','cy','et','hi','ja','mk','no','si',
-            'th','zh-cn','bn','da','eu','hr','ka','ml','pl','sk','tn','zh-tw','br','de','fa','hu','kl','mn','ps','sl',
-            'tr','zh','bs','dv','fi','hy','km','ms','pt','sq','tt','zu','ca','el','fr','ia','ko','my','ro','sr','tw'],
-        "plugins": 'safari,advhr,inlinepopups,preview,noneditable,nonbreaking,xhtmlxtras,template,table,autoresize',
+        "tinymceLanguagePacks": ["ar","ch","en","gl","id","lb","nb","ru","sv","uk","az","cn","eo","gu","is","lt","nl",
+            "sc","ta","ur","be","cs","es","he","it","lv","nn","se","te","vi","bg","cy","et","hi","ja","mk","no","si",
+            "th","zh-cn","bn","da","eu","hr","ka","ml","pl","sk","tn","zh-tw","br","de","fa","hu","kl","mn","ps","sl",
+            "tr","zh","bs","dv","fi","hy","km","ms","pt","sq","tt","zu","ca","el","fr","ia","ko","my","ro","sr","tw"],
+        "plugins": "safari,advhr,inlinepopups,preview,noneditable,nonbreaking,xhtmlxtras,template,table,autoresize",
         "buttons": {
-            "line_one": 'formatselect,fontselect,fontsizeselect,bold,italic,underline,|,forecolor,backcolor,|,justifyleft,justifycenter,justifyright,justifyfull,|,bullist,numlist,|,outdent,indent,|,table,link',
-            "line_two": '',
-            "line_three": ''
+            "line_one": "formatselect,fontselect,fontsizeselect,bold,italic,underline,|,forecolor,backcolor,|,justifyleft,justifycenter,justifyright,justifyfull,|,bullist,numlist,|,outdent,indent,|,table,link",
+            "line_two": "",
+            "line_three": ""
         }
     },
 
     "defaultSakaiDocContent": "",
-
-    /*
-     * _canEdit: can change the area permissions on this page
-     * _reorderOnly: can reorder this item in the navigation, but cannot edit the name of the page
-     * _nonEditable: cannot edit the contents of this page
-     * _canSubedit:
-     */
 
     "defaultprivstructure": {
         "structure0": {
@@ -1746,13 +1581,6 @@
         }
     },
 
-    /**
-     * In order to set permissions on specific private areas, the following parameter should be added:
-     *   _view: "anonymous" // Area is visible to all users by default
-     *   _view: "everyone" // Area is visible to all logged in users by default
-     *   _view: "contacts" // Area is visible to all contacts by default
-     *   _view: "private" // Area is not visible to other users by default
-     */
     "defaultpubstructure": {
         "structure0": {
             "profile": {
@@ -1848,19 +1676,6 @@
         }
     },
 
-    /**
-     * Explore (landing page/index.html) configuration
-     *
-     * oneRow: indicates if there should just be one row and one widget in
-     *         that row. Requires widges.oneRowWidget to be set
-     * widgets: object that contains the widgets that should be in the
-     *          landing page configuration
-     *   rightcol: The widget in the right column
-     *   main: The widget on the top left
-     *   bottom: The widget under the main widget
-     *   oneRowWidget: When oneRow is set to true, this widget will be the
-     *                 only widget displayed on the page
-     */
     "explore" : {
         "oneRow": false,
         "widgets": {

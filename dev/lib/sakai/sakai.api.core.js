@@ -61,6 +61,7 @@ define(
         data : sakai_user.data,
         widgets : sakai_widget_config
     };
+    sakai.config.SakaiDomain = window.location.protocol + "//" + window.location.host;
     // Load in the world templates
     var templates = sakai_util.getTemplates();
     sakai.config.worldTemplates = templates;
