@@ -128,7 +128,7 @@ response.setStatus(404);
                                 <h3>__MSG__GET_IN_TOUCH__</h3>
                                 <ul>
                                     {for g in links.getInTouch}
-                                        <li><a id="${g.id}" class="s3d-regular-links s3d-bold" href="${g.url}">${sakai.api.i18n.getValueForKey(g.title)}</a></li>
+                                        <li><a id="\${g.id}" class="s3d-regular-links s3d-bold" href="\${g.url}">\${sakai.api.i18n.getValueForKey(g.title)}</a></li>
                                     {/for}
                                 </ul>
                             {/if}
