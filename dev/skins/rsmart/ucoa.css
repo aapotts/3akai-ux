@@ -1,0 +1,16 @@
+/* Overrides for footer.css */
+#footer_logo {
+  background-image: url('/dev/skins/rsmart/images/footer_logo_ucoa.png') !important;
+  width: 110px !important;
+  height: 65px !important;
+}
+
+/* Overrides for institutionalskinning.css */
+.institutionalskinning_widget #institutionalskinning_logo {
+  background-image: url('/dev/skins/rsmart/images/header_logo_ucoa.png') !important;
+}
+
+.institutionalskinning_widget #institutionalskinning_logo {
+  background: url("/dev/skins/rsmart/images/header_logo_ucoa.png") no-repeat scroll left center #FFE76C !important;
+  height:108px !important;
+}
