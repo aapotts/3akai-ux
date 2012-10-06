@@ -61,7 +61,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai){
                 numItems = data.total;
                 var total = 0;
                 $.each(data.results, function(index, item){
-                    if (item["sakai:pooled-content-file-name"] && activityMap[item["sakai:activityMessage"]] && total < 5) {
+                    if (item["sakai:pooled-content-file-name"] && activityMap[item["sakai:activityMessage"]] && item["who"] && item["who"].basic && total < 5) {
                         if (index < numDiff) {
                             item.fadeIn = true;
                         }
@@ -71,13 +71,8 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai){
                         }
                         item.who.name = sakai.api.User.getDisplayName(item.who);
                         item["sakai:activity-appid"] = activityMap[item["sakai:activityMessage"]];
-                        item["sakai:activityMessage"] = sakai.api.i18n.Widgets.getValueForKey("recentactivity", "", item["sakai:activityMessage"]);
-                        if (item.who.picture) {
-                            item.who.picture = "/~" + sakai.api.Util.safeURL(item.who.userid) + "/public/profile/" + $.parseJSON(item.who.picture).name;
-                        }
-                        else {
-                            item.who.picture = "/dev/images/default_User_icon_50x50.png";
-                        }
+                        item["sakai:activityMessage"] = sakai.api.i18n.getValueForKey(item["sakai:activityMessage"], "recentactivity");
+                        item.who.picture = sakai.api.User.getProfilePicture(item.who);
                         item.usedin = sakai.api.Content.getPlaceCount(item);
                         results.push(item);
                         total++;

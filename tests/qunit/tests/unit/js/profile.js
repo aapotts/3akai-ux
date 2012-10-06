@@ -2,12 +2,12 @@ require(
     [
     "jquery",
     "sakai/sakai.api.core",
-    "../../../../tests/qunit/js/qunit.js",
+    "qunitjs/qunit",
     "../../../../tests/qunit/js/sakai_qunit_lib.js"
     ], 
     function($, sakai) {
 
-    require.ready(function() {
+    require(["misc/domReady!"], function(doc) {
         module("Profile");
 
         var profile = {}; profile.basic = {}; profile.basic.elements = {}; 
@@ -29,5 +29,8 @@ require(
             sakai.api.User.setProfileBasicElementValue(profile, "firstName", "Bob");
             ok(profile.basic.elements.firstName.value === "Bob", "First name properly changed");
         });
+
+        $(window).trigger("addlocalbinding.qunit.sakai");
+
     });
 });

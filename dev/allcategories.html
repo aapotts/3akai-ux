@@ -10,6 +10,7 @@
     </head>
     <body class="fl-centered explore i18nable">
         <!-- HEADER -->
+        <div id="widget_branding" class="widget_inline"></div>
         <div class="fl-container-flex header s3d-header">
             <div class="s3d-navigation-container">
                 <div id="widget_topnavigation" class="widget_inline"></div>
@@ -20,7 +21,7 @@
                 <div class="s3d-page-header">
                     <div id="widget_institutionalskinning" class="widget_inline"></div>
                     <div id="explore_navigation">
-                        <div class="s3d-contentpage-title">__MSG__ALL_CATEGORIES__</div>
+                        <h1 class="s3d-contentpage-title">__MSG__ALL_CATEGORIES__</h1>
                     </div>
                 </div>
             </div>
@@ -36,7 +37,7 @@
 
         <!-- Dependency JS -->
         <script data-main="/dev/lib/sakai/sakai.dependencies.js" src="/dev/lib/jquery/require.js"></script>
-        <script>require(["/dev/javascript/explore.js"]);</script>
+        <script>require(["/dev/javascript/allcategories.js"]);</script>
         <script type="text/javascript" charset="utf-8">
           var is_ssl = ("https:" == document.location.protocol);
           var asset_host = is_ssl ? "https://s3.amazonaws.com/getsatisfaction.com/" : "http://s3.amazonaws.com/getsatisfaction.com/";
@@ -56,7 +57,7 @@
               {
                   baseUrl:"/dev/lib/",
                   paths: {
-                      "jquery": "jquery/jquery-1.5.2"
+                      "jquery": "jquery/jquery-1.7.0"
                   }
               }
           );

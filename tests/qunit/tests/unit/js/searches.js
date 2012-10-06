@@ -2,12 +2,12 @@ require(
     [
     "jquery",
     "sakai/sakai.api.core",
-    "../../../../tests/qunit/js/qunit.js",
+    "qunitjs/qunit",
     "../../../../tests/qunit/js/sakai_qunit_lib.js"
     ], 
     function($, sakai) {
 
-    require.ready(function() {
+    require(["misc/domReady!"], function(doc) {
         module("Searches");
         var simpleSearch = "Abe Lincoln",
             simpleSearchTransformed = "Abe AND Lincoln",
@@ -34,5 +34,8 @@ require(
             same(sakai.api.Server.createSearchString(advancedSearch3), advancedSearch3, "Correctly left advanced search query alone");
             same(sakai.api.Server.createSearchString(advancedSearch4), advancedSearch4, "Correctly left advanced search query alone");
         });
+
+        $(window).trigger("addlocalbinding.qunit.sakai");
+
     });
 });

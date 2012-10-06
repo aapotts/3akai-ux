@@ -17,7 +17,7 @@
  */
 /* General */
 .footer_main{color:#454a4f;margin:0 auto;padding:0 0 10px;width:960px;background:transparent url(/devwidgets/footer/images/footer_shadow.png) 50% 0 no-repeat;}
-#footer_logo{background:url(/devwidgets/footer/images/footer_logo_cole.png) no-repeat scroll 0 0 transparent;width:124px;height:41px;float:left;margin-right:15px;}
+#footer_logo{background:url(/devwidgets/footer/images/footer_logo.png) no-repeat scroll 0 0 transparent;width:43px;height:28px;float:left;margin-right:15px;}
 #footer_logo_button{float:left;margin-left:-2px;padding-left:2px;}
 .footer_main #footer_debug_info{margin:5px 0 0 0;}
 .footer_main .footer_clickable{cursor:pointer;}
@@ -29,8 +29,11 @@
 .footer_main .fixed-container.bottom{padding-top:12px;border:0;}
 .footer_main .fixed-container.bottom a{margin-right:42px;}
 .footer_main .fixed-container p{font-size:11px;margin-bottom:0;padding-bottom:0;line-height:1.2em;color:#454a4f;}
-.footer_main .fixed-container a{color:#2683bc;}
-.footer_main .fixed-container a.toplink{float:right;margin-left:26px;font-weight:bold;}
+.footer_main .fixed-container #footer_links_right{
+    text-align: right;
+    float: right;
+}
+.footer_main .fixed-container a.toplink{margin-left:26px;font-weight:bold;}
 .footer_main .fixed-container button.back-top{color:#fff;display:block;float:right;font-size:13px;font-weight:bold;padding-right:4px;margin-top:-3px;}
 .footer_main .fixed-container button.s3d-link-button{font-size:11px; margin-right: 0px;}
 .footer_main .fixed-container div.back-top{background:url(/dev/images/dashboard_sprite.png) no-repeat scroll -102px -640px transparent;height:13px;width:10px;float:right;cursor:pointer; margin-top:-1px;}
@@ -39,7 +42,7 @@
 #footer_main_footer{background:url(/dev/images/body_bg_sprite.png) repeat-x scroll left -42px transparent;height:9px;margin:0 16px;}
 .footer_main .fixed-container.bottom p.footer_langloc{float:right;}
 .footer_main .fixed-container.bottom p.footer_langloc span{margin-left:26px;}
-.footer_main .fixed-container.bottom p.footer_langloc a{margin-right:0;}
+.footer_main .fixed-container.bottom p.footer_langloc button{margin-right:0;}
 
 /* Footer on the login page */
 .footer_push{height:45px;}

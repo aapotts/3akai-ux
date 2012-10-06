@@ -41,6 +41,11 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 
         var me = sakai.data.me;
         var languages = {};
+        var preferencesChanges = false;
+        var privacyChanges = false;
+        var passwordChanges = false;
+        var emailChanges = false;
+        var pageReload = false;
 
 
         /////////////////////////////
@@ -52,11 +57,21 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
         var accountPreferencesClass = ".accountpreferences";
 
         // Containers
+        var accountPreferencesTabsButtons = "#accountpreferences_tabs button";
+        var accountPreferencesPreferencesTab = "#accountpreferences_preferences_tab";
+        var accountPreferencesPrivacyTab = "#accountpreferences_privacy_tab";
+        var accountPasswordTab = "#accountpreferences_password_tab";
+        var accountEmailTab = "#accountpreferences_email_tab";
         var accountPreferencesContainer =  "#accountpreferences_container";
+        var preferContainer = accountPreferencesID + "_preferContainer";
+        var privacyContainer = accountPreferencesID + "_changePrivacyContainer";
         var passChangeContainer =  accountPreferencesID + "_changePassContainer";
+        var emailChangeContainer =  accountPreferencesID + "_changeEmailContainer";
 
         // Forms
         var accountPreferencesPasswordChange = accountPreferencesID + "_password_change";
+        var accountPreferencesPreferencesForm = accountPreferencesID + "_preferences_form";
+        var accountPreferencesEmailChange = accountPreferencesID + "_email_change";
 
         // Textboxes
         var currentPassTxt = "#curr_pass";
@@ -64,21 +79,17 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
         var newRetypePassTxt = "#retype_pass";
 
         // Buttons
+        var saveButton = accountPreferencesID + "_submit";
         var saveNewPass = accountPreferencesID + "_saveNewPass";
         var saveRegional = accountPreferencesID + "_submitRegional";
+        var accountPreferencesCancel = ".accountpreferences_cancel";
 
         // classes
         var buttonDisabled = "s3d-disabled";
+        var tabSelected = "selected";
+        var taggingSelected = "accountpreferences_autotagging_selected";
 
         // messages
-        var generalMessageShowTime = 3000;
-        var generalMessage = accountPreferencesClass + "_general_message";
-        var generalMessageReg = accountPreferencesID + "_general_message_regional";
-        var generalMessagePass = accountPreferencesID + "_general_message_pass";
-        var errorMessage = accountPreferences + "_error_message";
-        var normalMessage = accountPreferences + "_normal_message";
-
-        // messages content
         var errorPassNotEqual = accountPreferencesID + "_error_passNotEqual";
         var errorIncorrectPass = accountPreferencesID + "_error_incorrectPass";
         var errorFailChangePass = accountPreferencesID + "_error_failChangePass";
@@ -87,8 +98,13 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
         var messagePassChangedBody = accountPreferencesID + "_message_passChangedBody";
         var errorInvalidPass = accountPreferencesID + "_error_invalidPass";
         var errorFailChangeLang = accountPreferencesID + "_error_failChangeLang";
+        var messageChangeLangTitle = accountPreferencesID + "_message_ChangeLang_title";
         var messageChangeLang = accountPreferencesID + "_message_ChangeLang";
         var errorPassSame = accountPreferencesID + "_error_passSame";
+        var errorFailChangeEmail = accountPreferencesID + "_error_failChangeEmail";
+        var errorFailChangeEmailBody = accountPreferencesID + "_error_failChangeEmailBody";
+        var messageEmailChanged = accountPreferencesID + "_message_emailChanged";
+        var messageEmailChangedBody = accountPreferencesID + "_message_emailChangedBody";
 
         // Comboboxes
         var timezonesContainer = "#time_zone";
@@ -97,55 +113,34 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
         // templates
         var languagesTemplate = accountPreferences + "_languagesTemplate";
 
+        var $accountpreferences_langloc_settings = $("#accountpreferences_langloc_settings");
+
         var myClose = function(hash) {
             hash.o.remove();
             hash.w.hide();
         };
 
         var myShow = function(hash){
-            window.scrollTo(0, 0);
+            doInit();
+            loadPrivacySettings();
             hash.w.show();
-        }
+        };
 
         ///////////////////////
         // Utility functions //
         ///////////////////////
         /**
          * Public function that can be called from elsewhere
-         * (e.g. chat and sites widget)
+         * (e.g. sites widget)
          * It initializes the accountPreferencesContainer widget and shows the jqmodal (ligthbox)
          */
         var initialize = function(){
-            $(accountPreferencesContainer).jqmShow();
+            sakai.api.Util.Modal.open(accountPreferencesContainer);
         };
 
         $(window).bind("init.accountpreferences.sakai", function() {
             initialize();
         });
-
-         /**
-         * Shows a general message on the top screen
-         * @param {String} msg    the message you want to display
-         * @param {Boolean} isError    true for error (red block)/false for normal message(green block)
-         * @param {Number} timeoutthe amout of milliseconds you want the message to be displayed, 0 = always (till the next message)
-         */
-        var showGeneralMessage = function(msg, isError, hidebutton, generalMessage) {
-            $(generalMessage).html(sakai.api.Security.saneHTML(msg));
-            if (isError) {
-                $(generalMessage).addClass(errorMessage);
-                $(generalMessage).removeClass(normalMessage);
-            }
-            else {
-                $(generalMessage).removeClass(errorMessage);
-                $(generalMessage).addClass(normalMessage);
-            }
-            $(hidebutton).hide();
-            $(generalMessage).show();
-            window.setTimeout(function(){
-                $(generalMessage).hide();
-                $(hidebutton).show();
-            },generalMessageShowTime);
-        };
 
         /////////////////
         // Change pass //
@@ -199,6 +194,8 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                         sakai.api.Util.notification.show($(messagePassChanged).html(), $(messagePassChangedBody).html());
                         // clear all the fields
                         clearPassFields();
+                        passwordChanges = false;
+                        finishSave();
                     },
                     error: function(xhr, textStatus, thrownError) {
 
@@ -211,6 +208,41 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 
         };
 
+        /////////////////////////////
+        // Change privacy settings //
+        /////////////////////////////
+
+        var loadPrivacySettings = function(){
+            sakai.api.User.loadPrivacySettings(function(setting){
+                checkPrivacySetting($("#accountpreferences_privacy_" + setting).parent());
+            });
+        };
+
+        var checkPrivacySetting = function($option){
+            $(".accountpreferences_selectable").addClass("accountpreferences_unselected_rbt");
+            $(".accountpreferences_selectable").removeClass("s3d-outer-shadow-container");
+            $option.addClass("s3d-outer-shadow-container");
+            $option.removeClass("accountpreferences_unselected_rbt");
+            $("input", $option).attr("checked", "checked");
+        };
+
+        $(".accountpreferences_selectable").live("click", function(){
+            checkPrivacySetting($(this));
+            // enable the save button
+            enableElements($(saveButton));
+            privacyChanges = true;
+        });
+
+        $("#accountpreferences_privacy_change").live("submit", function(ev){
+            var option = $(".accountpreferences_selectable input:radio[name='accountpreferences_privacy_radio']:checked").val();
+            sakai.api.User.savePrivacySettings(option, function(success){
+                sakai.api.Util.notification.show(sakai.api.i18n.getValueForKey("PRIVACY_SETTINGS", "accountpreferences"), sakai.api.i18n.getValueForKey("PRIVACY_SETTINGS_UPDATED", "accountpreferences"));
+                privacyChanges = false;
+                finishSave();
+            });
+            ev.stopPropagation();
+            return false;
+        });
 
         //////////////////////////////
         // Change Country, Timezone //
@@ -234,6 +266,30 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
         };
 
         /**
+         * Set whether to tag documents automatically
+         *
+         */
+        var selectAutoTagging = function(autoTag){
+            autoTag = autoTag || false;
+            $("#accountpreferences_section_autotagging_buttons button").removeClass(taggingSelected);
+            $("input:radio[name='autotagging'][value=" + autoTag + "]").attr("checked", "checked");
+            $("#accountpreferences_section_autotagging_buttons #button_autotagging_" + autoTag).addClass(taggingSelected);
+            $("#tag_msg_info").attr("disabled", !autoTag);
+        };
+
+        /**
+         * Set send message after tagging"
+         *
+         */
+        var selectSendTagMsg = function(sendTagMsg){
+            if (sendTagMsg){
+                $("#tag_msg_info").attr("checked", "checked");
+            } else {
+                $("#tag_msg_info").removeAttr("checked");
+            }
+        };
+
+        /**
          * Puts the languages in a combobox
          * @param {Object} languages
          */
@@ -246,8 +302,8 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
          * Gets all the languages supported and puts them in a combobox
          */
         var getLanguages = function(){
-            var langs = sakai.config.Languages;
-            if (sakai.config.displayDebugInfo === true) {
+            var langs = $.extend([], sakai.config.Languages);
+            if (sakai.config.displayDebugInfo) {
                 langs.push({
                     "country": "GB",
                     "displayName": "i18n debug",
@@ -263,38 +319,95 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
          */
         var saveRegionalToMe = function(){
             var language = $(languagesContainer).val();
-            var locale = {"locale" : language, "timezone" : $(timezonesContainer).val(), "_charset_":"utf-8", ":sakai:update-profile": false};
+            var isAutoTagging = $("input:radio[name='autotagging']:checked").val();
+            var sendTagMsg = $("#tag_msg_info").is(':checked');
+            var locale = {
+                "locale" : language, 
+                "timezone" : $(timezonesContainer).val(), 
+                "_charset_":"utf-8", 
+                ":sakai:update-profile": false, 
+                "isAutoTagging": isAutoTagging, 
+                "sendTagMsg": sendTagMsg
+            };
 
             // if regional Setting and langauge is changed only then save the changes
-            if (me.user.locale.timezone.name !== $(timezonesContainer).val() || language !== me.user.locale.language+"_"+me.user.locale.country) {
-                $.ajax({
-                    data: locale,
-                    url: "/system/userManager/user/" + me.user.userid + ".update.html",
-                    type: "POST",
-                    success: function(data){
+            //if ( || me.user.properties.isAutoTagging !== isAutoTagging || me.user.properties.sendTagMsg !== sendTagMsg) {
+            $.ajax({
+                data: locale,
+                url: "/system/userManager/user/" + me.user.userid + ".update.html",
+                type: "POST",
+                success: function(data){
 
-                        if (language !== me.user.locale.language + "_" + me.user.locale.country) {
-                            // Reload the page if the language for a user has changed
-                            sakai.api.Util.notification.show($(messageChangeLang).html(), $(messageChangeLang).html());
-                                window.setTimeout(function(){
-                                document.location.reload();
-                            },2000);
-                        }
-                        else {
-                            // Show successful regional setting change through gritter and reload the page
-                            me.user.locale.timezone.name = $(timezonesContainer).val();
-                            sakai.api.Util.notification.show($(messageChangeLang).html(), $(messageChangeLang).html());
-                                window.setTimeout(function(){
-                                document.location.reload();
-                            },2000);
-                        }
-
-                    },
-                    error: function(xhr, textStatus, thrownError){
-                        // show regional setting error message through gritter
-                        sakai.api.Util.notification.show($(errorFailChangeLang).html(), $(errorFailChangeLang).html());
+                    if (language !== me.user.locale.language + "_" + me.user.locale.country || me.user.locale.timezone.name !== $(timezonesContainer).val()) {
+                        sakai.api.Util.notification.show($(messageChangeLangTitle).html(), $(messageChangeLang).html());
+                        // Reload the page if the language for a user has changed
+                        pageReload = true;
+                    } else {
+                        sakai.data.me.user.properties.isAutoTagging = isAutoTagging;
+                        sakai.data.me.user.properties.sendTagMsg = sendTagMsg;
+                        sakai.api.Util.notification.show($(messageChangeLangTitle).html(), $(messageChangeLang).html());
                     }
-                });
+                    preferencesChanges = false;
+                    finishSave();
+
+                },
+                error: function(xhr, textStatus, thrownError){
+                    // show regional setting error message through gritter
+                    sakai.api.Util.notification.show($(messageChangeLangTitle).html(), $(errorFailChangeLang).html());
+                }
+            });
+        };
+
+        var saveEmail = function() {
+            var emailVal = $.trim($('#accountpreferences_email').val());
+            var data = {'email': emailVal};
+            sakai.api.User.updateUserProfile(
+                sakai.data.me.user.userid,
+                "basic", data, false, {}, false, function(success, data) {
+                    if (success) {
+                        emailChanges = false;
+                        sakai.api.Util.notification.show(
+                            $(messageEmailChanged).html(),
+                            $(messageEmailChangedBody).html());
+                        $(accountPreferencesContainer).jqmHide();
+                    } else {
+                        sakai.api.Util.notification.show(
+                            $(messageEmailChanged).html(),
+                            $(messageEmailChangedBody).html());
+                    }
+                }
+            );
+        };
+
+        $(saveButton).bind("click", function(){
+            if (preferencesChanges){
+                $(accountPreferencesPreferencesForm).submit();
+            }
+            if (privacyChanges){
+                $("#accountpreferences_privacy_change").submit();
+            }
+            if (passwordChanges){
+                $(accountPasswordTab).click();
+                if ($(accountPreferencesPasswordChange).valid()) {
+                    $(accountPreferencesPasswordChange).submit();
+                }
+            }
+            if (emailChanges) {
+                $("#accountpreferences_email_change").submit();
+            }
+        });
+
+        /**
+         * Hides the dialog box when saving is complete and reloads the page if needed
+         */
+        var finishSave = function(){
+            if (!preferencesChanges && !privacyChanges && !passwordChanges){
+                sakai.api.Util.Modal.close(accountPreferencesContainer);
+                if (pageReload){
+                    window.setTimeout(function(){
+                        document.location.reload();
+                    },2000);
+                }
             }
         };
 
@@ -302,32 +415,48 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
          * Initialise form validation
          */
         var initValidation = function(){
-            $(accountPreferencesPasswordChange).validate({
-                errorClass: "accountpreferences_error",
-                errorElement:"div",
-                rules:{
-                    curr_pass:{
-                        required: true,
+            $.validator.addMethod("newpw", function(value, element){
+                return this.optional(element) || (value !== $("#curr_pass").val());
+            }, $(errorPassSame).html());
+
+            var validateOpts = {
+                rules: {
+                    curr_pass: {
                         minlength: 4
                     },
-                    new_pass:{
-                        required: true,
-                        minlength: 4
+                    new_pass: {
+                        minlength: 4,
+                        newpw: true
                     },
-                    retype_pass:{
-                        required: true,
+                    retype_pass: {
                         minlength: 4,
                         equalTo: "#new_pass"
                     }
                 },
                 messages: {
-                    retype_pass:{
-                        "equalTo": "Please enter the same password twice."
+                    retype_pass: {
+                        "equalTo": sakai.api.i18n.getValueForKey("PLEASE_ENTER_PASSWORD_TWICE", "accountpreferences")
                     }
                 },
-                debug:true
+                submitHandler: changePass
+            };
 
-            });
+            // Initialize the validate plug-in
+            sakai.api.Util.Forms.validate($(accountPreferencesPasswordChange), validateOpts);
+
+            var validatePreferencesOpts = {
+                submitHandler: saveRegionalToMe
+            };
+
+            // Initialize the validate plug-in
+            sakai.api.Util.Forms.validate($(accountPreferencesPreferencesForm), validatePreferencesOpts);
+
+            var validateEmailOpts = {
+                submitHandler: saveEmail
+            };
+
+            // Initialize the validate plug-in
+            sakai.api.Util.Forms.validate($(accountPreferencesEmailChange), validateEmailOpts);
         };
 
         /**
@@ -354,7 +483,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
          * This makes use of the jqModal (jQuery Modal) plugin that provides support
          * for lightboxes
          */
-        $(accountPreferencesContainer).jqm({
+        sakai.api.Util.Modal.setup(accountPreferencesContainer, {
             modal: true,
             overlay: 20,
             toTop: true,
@@ -362,64 +491,75 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
             onHide: myClose
         });
 
-        /** Binds the submit function on the password change form **/
-        $(accountPreferencesPasswordChange).submit(function(){
-
-            var pass = $(currentPassTxt).val();
-            var newPass1 = $(newPassTxt).val();
-            var newPass2 = $(newRetypePassTxt).val();
-
-            if (pass === newPass1) {
-                // Notify the user that he/she is trying to use the same pasword
-                sakai.api.Util.notification.show("", $(errorPassSame).html());
-                return false;
-            }
-
-            // check if the user enter valid data for old and new passwords
-            if ($(accountPreferencesPasswordChange).valid()) {
-
-                // change the password
-                changePass();
-            }
-            return true;
+        $('#accountpreferences_email').on('change', function() {
+            enableElements($(saveButton));
+            emailChanges = true;
         });
 
         /** Binds all the regional settings select box change **/
-        $("#time_zone, #pass_language").change(function(e){
-            // enable the change regional setting button
-            enableElements($(saveRegional));
+        $("#time_zone, #pass_language, input[name='autotagging'], #tag_msg_info").change(function(e){
+            // enable the save button
+            enableElements($(saveButton));
+            preferencesChanges = true;
         });
 
         /** Binds all the password boxes (keyup) **/
-        $("input[type=password]", passChangeContainer).keyup(function(e){
+        $("input[type='password']", passChangeContainer).keyup(function(e){
 
             // If we'd use keypress for this then the input fields wouldn't be updated yet
             // check if the user didn't just fill in some spaces
             if(checkIfInputValid()){
-                // enable the change pass button
-                enableElements($(saveNewPass));
-            }
-            else{
-                // disable the change pass button
-                disableElements($(saveNewPass));
+                // enable the save button
+                enableElements($(saveButton));
+                passwordChanges = true;
             }
         });
 
-        /** Binds the save regional button **/
-        $(saveRegional).click(function(){
-            saveRegionalToMe();
-            return false;
+        $("#accountpreferences_section_autotagging_buttons button").click(function(e){
+            selectAutoTagging($(this).attr("data-sakai-autotagging") === "true" ? true : false);
+            enableElements($(saveButton));
+            preferencesChanges = true;
+            e.preventDefault();
         });
-        
-        var updateFooter = function(){
-            $("#footer_location").text(me.user.locale.timezone.name);
-            for(var i = 0, len = sakai.config.Languages.length; i < len; i++){
-                if(me.user.locale.country === sakai.config.Languages[i].country){
-                    $("#footer_language").text(sakai.config.Languages[i].displayName);
-                    break;
-                }
-            }
+
+        var hideAllPanes = function(){
+            $(passChangeContainer).hide();
+            $(preferContainer).hide();
+            $(privacyContainer).hide();
+            $(emailChangeContainer).hide();
         };
+
+        $(accountPreferencesPreferencesTab).on('click', function() {
+            $(accountPreferencesTabsButtons).removeClass(tabSelected);
+            $(accountPreferencesPreferencesTab).addClass(tabSelected);
+            hideAllPanes();
+            $(preferContainer).show();
+        });
+
+        $(accountPreferencesPrivacyTab).on('click', function() {
+            $(accountPreferencesTabsButtons).removeClass(tabSelected);
+            $(accountPreferencesPrivacyTab).addClass(tabSelected);
+            hideAllPanes();
+            $(privacyContainer).show();
+        });
+
+        $(accountPasswordTab).on('click', function() {
+            $(accountPreferencesTabsButtons).removeClass(tabSelected);
+            $(accountPasswordTab).addClass(tabSelected);
+            hideAllPanes();
+            $(passChangeContainer).show();
+        });
+
+        $(accountEmailTab).on('click', function() {
+            $(accountPreferencesTabsButtons).removeClass(tabSelected);
+            $(accountEmailTab).addClass(tabSelected);
+            hideAllPanes();
+            $(emailChangeContainer).show();
+        });
+
+        $(accountPreferencesCancel).die('click').live('click', function() {
+            sakai.api.Util.Modal.close(accountPreferencesContainer);
+        });
 
         /////////////////////////////
         // INITIALISATION FUNCTION //
@@ -428,21 +568,40 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
         var doInit = function(){
             if (!sakai.data.me.user.anon) {
                 // An anonymous user shouldn't have access to this page
-                disableElements($(saveNewPass));
-                disableElements($(saveRegional));
+                clearPassFields();
+                disableElements($(saveButton));
                 selectTimezone(me.user.locale.timezone);
+                selectAutoTagging(me.user.properties.isAutoTagging);
+                selectSendTagMsg(me.user.properties.sendTagMsg);
+
                 getLanguages();
                 initValidation();
-                
+
                 // if allowpasswordchange is false then hide the regional setting
                 if (!sakai.config.allowPasswordChange) {
+                    $(accountPasswordTab).hide();
                     $(passChangeContainer).hide();
-                }               
-                updateFooter();
+                }
+                if (sakai.config.emailLocation !== 'accountpreferences') {
+                    $(accountEmailTab).hide();
+                    $(emailChangeContainer).hide();
+                } else {
+                    var emailVal = sakai.api.User.getProfileBasicElementValue(
+                        sakai.data.me.profile,
+                        'email');
+                    $('#accountpreferences_email').val(emailVal);
+                }
+                if (sakai.config.displayTimezone || sakai.config.displayLanguage) {
+                    $accountpreferences_langloc_settings.show();
+                    if (sakai.config.displayTimezone) {
+                        $('#accountpreferences_select_timezone').show();
+                    }
+                    if (sakai.config.displayLanguage) {
+                        $('#accountpreferences_select_language').show();
+                    }
+                }
             }
         };
-
-        doInit();
 
     };
 

@@ -15,7 +15,7 @@
  * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-require(["jquery", "sakai/sakai.api.core"], function($, sakai){
+require(['jquery', 'sakai/sakai.api.core', 'misc/zxcvbn'], function($, sakai){
 
     sakai_global.createnewaccount = function(){
 
@@ -59,6 +59,8 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai){
         var lastNameEmpty = "#lastName_empty";
         var emailEmpty = "#email_empty";
         var emailInvalid = "#email_invalid";
+        var emailNotUnique = "#email_not_unique";
+        var emailsMustMatch = "#emails_must_match";
         var passwordEmpty = "#password_empty";
         var passwordShort = "#password_short";
         var passwordRepeatEmpty = "#password_repeat_empty";
@@ -81,6 +83,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai){
         ///////////////////////
 
         var usernameEntered = "";
+        var emailEntered = "";
 
         /**
          * Get all of the values out of the form fields. This will return
@@ -148,11 +151,8 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai){
          */
         var doCreateUser = function(){
             var values = getFormValues();
-            //var mktgData = {};
-
             $("button").attr("disabled", "disabled");
             $("input").attr("disabled", "disabled");
-
             sakai.api.User.createUser(values.username, values.firstName, values.lastName, values.email, values.password, values.password, {
                 recaptcha: {
                     challenge: values["recaptcha-challenge"],
@@ -188,7 +188,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai){
                             "password": values.password
                         }, function(){
                             // Relocate to the user home space
-                            document.location = "/me";
+                            document.location = "/me?welcome=true";
                         });
                     }, 2000);
                 }
@@ -216,7 +216,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai){
          * and don't want to do anything else afterwards if set to true. If set
          * to false, it will start doing the actual creation of the user once
          * the check has been completed.
-         */
+        */
         var checkUserName = function(checkingOnly, callback){
             var values = getFormValues();
             var ret = false;
@@ -227,7 +227,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai){
             // If we reach this point, we have a username in a valid format. We then go and check
             // on the server whether this eid is already taken or not. We expect a 200 if it already
             // exists and a 401 if it doesn't exist yet.
-            var url = sakai.config.URL.USER_EXISTENCE_SERVICE.replace(/__USERID__/g, values.username);
+            var url = sakai.config.URL.USER_EXISTENCE_SERVICE.replace(/__USERID__/g, $.trim(values.username));
             if (errObj.length === 0) {
                 $.ajax({
                     // Replace the preliminary parameter in the service URL by the real username entered
@@ -242,7 +242,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai){
                     error: function(xhr, textStatus, thrownError){
                         // SAKIII-1736 - IE will interpret the 204 returned by the server as a
                         // status code 1223, which will cause the error clause to activate
-                        if (xhr.status === 1223) {
+                        if (xhr.status === 1223 || xhr.status === 409) {
                             ret = false;
                         } else {
                             ret = true;
@@ -256,9 +256,68 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai){
             return ret;
         };
 
+        var checkEmailAddress = function(checkingOnly, callback) {
+            var values = getFormValues();
+            var url = sakai.config.URL.USER_EMAIL_EXISTENCE_SERVICE.replace(/__EMAIL__/g, $.trim(values.email));
+            return sakai.api.User.checkExistence(url, checkingOnly, callback, errObj);
+	};
+		
         var initCaptcha = function(){
             sakai.api.Widgets.widgetLoader.insertWidgets("captcha_box", false);
         };
+
+        /**
+         * Uses zxcvbn.js to determine the password strength of the user's
+         * password, and displays a message inline
+         */
+        var checkPasswordStrength = function() {
+            var currentPw = $.trim($('#password').val());
+            if (currentPw) {
+                // Run the zxcvbn test on the currentPw, passing in all
+                // the current input values to use them as data points
+                var strength = zxcvbn(currentPw,
+                    [
+                        $('#username').val(),
+                        $('#firstName').val(),
+                        $('#lastName').val(),
+                        $('#email').val(),
+                        $('#institution').val(),
+                        $('#phone').val()
+                    ]);
+                var $strength = $('#password_strength');
+                var score = 'zero';
+                var strengthPhrase = 'STRENGTH_WEAK';
+                // Determine the strength phrasing and class
+                switch (strength.score) {
+                    case 1:
+                        score = 'one';
+                        break;
+                    case 2:
+                        strengthPhrase = 'STRENGTH_GOOD';
+                        score = 'two';
+                        break;
+                    case 3:
+                        strengthPhrase = 'STRENGTH_STRONG';
+                        score = 'three';
+                        break;
+                    case 4:
+                        strengthPhrase = 'STRENGTH_VSTRONG';
+                        score = 'four';
+                        break;
+                    default:
+                        break;
+                }
+                // Remove all the classes and add in the new classes and text
+                $strength
+                    .removeClass()
+                    .addClass('strength_' + score)
+                    .text(sakai.api.i18n.getValueForKey(strengthPhrase));
+                $('#password_strength').show();
+            } else {
+                $('#password_strength').hide();
+            }
+        };
+
 
 
         ////////////////////
@@ -279,7 +338,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai){
                 var username = $.trim($(usernameField).val());
                 if (usernameEntered != username) {
                     usernameEntered = username;
-                    if (username && username.length > 2) {
+                    if (username && username.length > 2 && username.indexOf(" ") === -1) {
                         $(usernameField).removeClass("signup_form_error");
                         checkUserName(true, function(success){
                             $("#create_account_username_error").hide();
@@ -297,11 +356,12 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai){
                 }
             });
 
-            $("#role").bind("change", function(){
+            $('#role').on('change', function() {
                 var role = $.trim($(roleField).val());
-
-                setRoleIsStudent (role == 'Student');
+                setRoleIsStudent(role === 'Student');
             });
+
+            $('#password').on('keyup', checkPasswordStrength);
 
             /*
              * Once the user is trying to submit the form, we check whether all the fields have valid
@@ -314,27 +374,35 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai){
             $.validator.addMethod("validusername", function(value, element){
                 return this.optional(element) || (checkUserName());
             }, "* This username is already taken.");
+            
+            $.validator.addMethod("emailmatch", function(value, element){
+                var values = getFormValues();
+                return this.optional(element) || (value === values.email);
+            }, "* The emails do not match.");
 
-            $.validator.addMethod("passwordmatch", function(value, element){
-                return this.optional(element) || (value === $(passwordField).val());
-            }, "* The passwords do not match.");
+            $.validator.addMethod("validemail", function(value, element){
+                return this.optional(element) || (checkEmailAddress());
+            }, "* This email is already taken.");
 
-            $("#create_account_form").validate({
-                onclick: false,
-                onkeyup: false,
-                onfocusout: false,
-                errorClass: "signup_form_error",
+            var validateOpts = {
                 rules: {
                     password: {
                         minlength: 4
                     },
                     password_repeat: {
-                        passwordmatch: true
+                        equalTo: "#password"
                     },
                     username: {
                         minlength: 3,
                         nospaces: true,
                         validusername: true
+                    },
+                    email: {
+                        email: true,
+                        validemail: true
+                    },
+                    emailConfirm: {
+                        emailmatch: true
                     },
                     role: {
                         minlength: 1,
@@ -358,7 +426,11 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai){
                     lastName: $(lastNameEmpty).text(),
                     email: {
                         required: $(emailEmpty).text(),
-                        email: $(emailInvalid).text()
+                        email: $(emailInvalid).text(),
+                        validemail: $(emailNotUnique).text()
+                    },
+                    emailConfirm: {
+                        emailmatch: $(emailsMustMatch).text()
                     },
                     username: {
                         required: $(usernameEmpty).text(),
@@ -375,19 +447,11 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai){
                     }
                 },
                 submitHandler: function(form, validator){
-                    $(".create_account_input_error").hide();
                     doCreateUser();
                     return false;
-                },
-                errorPlacement: function(error, element){
-                    $("label."+element[0].id).addClass("signup_form_error_label");
-                    $(element).prev().text(error.text());
-                    $(element).prev().show();
-                    if(element[0].id == "username"){
-                        $(element).removeClass("username_available_icon");
-                    }
                 }
-            });
+            };
+            sakai.api.Util.Forms.validate($("#create_account_form"), validateOpts);
         };
 
         $("#save_account").click(function(){

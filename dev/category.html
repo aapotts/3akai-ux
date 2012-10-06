@@ -12,6 +12,7 @@
     <body class="fl-centered explore i18nable">
         <div style="display:none">__MSG__IE_PLACEHOLDER__</div>
         <!-- HEADER -->
+        <div id="widget_branding" class="widget_inline"></div>
         <div class="fl-container-flex header s3d-header">
             <div class="s3d-navigation-container">
                 <div id="widget_topnavigation" class="widget_inline"></div>
@@ -23,27 +24,27 @@
                     <div id="widget_institutionalskinning" class="widget_inline"></div>
                     <div id="explore_navigation"></div>
                     <div id="explore_navigation_template"><!--
-                    <div class="s3d-contentpage-title">
-                        {for crumb in breadcrumb}
-                            {if crumb_index != 0}
-                            <span>&nbsp;/&nbsp;</span>
-                            {/if}
-                            {if crumb.link}
-                                <a href="{if crumb.url}${crumb.url} {else} #l=${crumb.id}{/if}" class="s3d-bold s3d-regular-links">
-                            {/if}
-
-                            ${crumb.title}
-
-                            {if crumb.link}
-                                </a>
-                            {/if}
-                        {/for}
-                        </div>
-                    --></div>
+                        <h1 class="s3d-contentpage-title">
+                            {for crumb in breadcrumb}
+                                {if crumb_index != 0}
+                                <span>&nbsp;/&nbsp;</span>
+                                {/if}
+                                {if crumb.link}
+                                    <a href="{if crumb.url}${crumb.url} {else} #l=${crumb.id}{/if}" class="s3d-bold s3d-regular-links">
+                                {/if}
+    
+                                ${crumb.title}
+    
+                                {if crumb.link}
+                                    </a>
+                                {/if}
+                            {/for}
+                        </h1>
+                --></div>
                 </div>
             </div>
         </div>
-        <div class="fl-fix fl-centered fixed-container s3d-main-container">
+        <div class="fl-fix fl-centered fixed-container s3d-main-container s3d-twocolumn">
             <div class="s3d-page-column-left">
                 <div id="widget_lhnavigation" class="widget_inline"></div>
             </div>
@@ -77,7 +78,7 @@
               {
                   baseUrl:"/dev/lib/",
                   paths: {
-                      "jquery": "jquery/jquery-1.5.2"
+                      "jquery": "jquery/jquery-1.7.0"
                   }
               }
           );

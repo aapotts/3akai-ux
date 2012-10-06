@@ -118,11 +118,10 @@ sakai_global.s23_site = function(){
         if (pageid) {
 
             // Remove the active class from the previous selected item
-            $(s23SiteMenuItems).removeClass(s23SiteMenuActive);
+            $(s23SiteMenuItems).closest('li').removeClass(s23SiteMenuActive);
             
             // Set the active class to the item you just clicked on
-            $('#' + s23SiteMenuItemTag + pageid).addClass(s23SiteMenuActive);
-            
+            $('#' + s23SiteMenuItemTag + pageid.replace(/([~!])/g, '_')).closest('li').addClass(s23SiteMenuActive);
             // Get the page info for a certain page and store it in a variable
             var page = getPageInfo(pageid);
             
@@ -133,7 +132,7 @@ sakai_global.s23_site = function(){
                 $(s23SitePageContainerClass, s23SiteIframeContainer).hide();
                 
                 // Get the complete id for a page container
-                var completexid = s23SitePageContainerTag + page.xid;
+                var completexid = s23SitePageContainerTag + page.xid.replace(/([~!])/g, '_');
                 
                 // Check if the page was already loaded before
                 if ($("#" + completexid).length > 0) {
@@ -221,7 +220,7 @@ sakai_global.s23_site = function(){
                         }
                         // The 'reset' tool <a> link, is overridden with the below event to reload the 
                         // sites iframe with the fresh tool state URL generated in the template. 
-                        $("#reset-Main" + page.tools[tool].xid).click(handleResetClick);
+                        $("#reset-Main" + page.tools[tool].xid).on('click', handleResetClick);
                     }
                     firstFrame.load(function(){
                         for (var j = 0; j < otherframes.length; j++) {
@@ -229,10 +228,43 @@ sakai_global.s23_site = function(){
                             nextset[0].attr("src", nextset[1]);
                         }
                     });
-                    firstFrame.attr("src", firstFrameSrcUrl);
+                    if (sakai.config.hybridCasHost){
+                        // check for CLE session cookie
+                        if ($.cookie('JSESSIONID')){
+                            $.ajax({
+                                url: '/direct/session/current.json',
+                                success: function(data){
+                                    if (data['userId'] === null) {
+                                        doCasAuth();
+                                    } else {
+                                        firstFrame.attr('src', firstFrameSrcUrl);
+                                    }
+                                },
+                                error: doCasAuth
+                            });
+                        } else {
+                            doCasAuth();
+                        }
+                    } else {
+                        firstFrame.attr("src", firstFrameSrcUrl);
+                    }
                 }
             }
         }
+    };
+
+    var doCasAuth = function() {
+        $.ajax({
+            url: '/system/sling/cas/proxy?t=https://' + sakai.config.hybridCasHost + '/sakai-login-tool/container',
+            success: function(data){
+                $.ajax({
+                    url: '/sakai-login-tool/container?ticket=' + data['proxyticket'],
+                    success: function(){
+                        firstFrame.attr('src', firstFrameSrcUrl);
+                    }
+                });
+            }
+        });
     };
 
     /**
@@ -277,7 +309,7 @@ sakai_global.s23_site = function(){
             // Set the title of the page
             entityReady = true;
             renderEntity();
-            document.title += " " + sakai.api.Security.saneHTML(completeJSON.site.title)
+            document.title += " " + sakai.api.Security.saneHTML(completeJSON.site.title);
 
             // Render the menu of the workspace
             s23SiteMenuContainer.html(sakai.api.Util.TemplateRenderer(s23SiteMenuContainerTemplate, completeJSON));
@@ -344,7 +376,7 @@ sakai_global.s23_site = function(){
             // If we haven't saved the prefs yet, or if we did and the noti isn't turned off show the notifcation area.
             if (success === false || (success === true && data.sakai2notification !== false)) { 
                 sakai.api.Util.notification.show($(s23GritterNotificationTitle).html(), $(s23GritterNotificationMessage).html(), sakai.api.Util.notification.type.INFORMATION, false);
-                $(".s23_gritter_notification_cancel").click(hideNotification);
+                $(".s23_gritter_notification_cancel").on('click', hideNotification);
             }
         });
 
@@ -370,6 +402,11 @@ sakai_global.s23_site = function(){
             $(window).trigger("sakai.entity.init", ["s23site", "", {
                 "title": sakai.api.Security.saneHTML(completeJSON.site.title)
             }]);
+            $('.icon-sakai-help').on('click', function(ev) {
+                ev.preventDefault();
+                var helpWindow = window.open('/portal/help/main', 'help','resizable=yes,toolbar=no,scrollbars=yes,menubar=yes,width=800,height=600');
+                helpWindow.focus();
+            });
         }
     };
 

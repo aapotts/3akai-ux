@@ -1,10 +1,15 @@
 {
-    "description": "Inbox",
     "i18n": {
-        "default": "/devwidgets/inbox/bundles/default.properties"
+        "default": {
+            "bundle": "/devwidgets/inbox/bundles/default.properties",
+            "name": "inbox",
+            "description": "Inbox"
+        },
+        "es_ES": { 
+            "bundle": "/devwidgets/inbox/bundles/es_ES.properties"
+        }
     },
     "id": "inbox",
-    "name": "inbox",
     "personalportal":false,
     "type": "sakai",
     "enabled": true,

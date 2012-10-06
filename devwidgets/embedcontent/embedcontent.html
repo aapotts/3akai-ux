@@ -6,15 +6,15 @@
 <div id="embedcontent_main_container" style="display:none">
     <div class="fl-widget-content s3d-widget-content">
         <div style="display:none">__MSG__IE_PLACEHOLDER__</div>
-        <div id="embedcontent_content" class="clearfix"><!-- --></div>
+        <div id="embedcontent_content" class="embedcontent_overflowy"><!-- --></div>
         <div id="embedcontent_content_html_template"><!--
         {if showDefaultContent}
             <img src="/devwidgets/embedcontent/images/defaultcontent.png"/>
         {else}
-            {if embedmethod === "original"}
-                {var embedClass="embedcontent_large_content clearfix"}
+            {if embedmethod === "thumbnail"}
+                {var embedClass="embedcontent_thumbnail_content embedcontent_overflowy"}
             {else}
-                {var embedClass="embedcontent_thumbnail_content clearfix"}
+                {var embedClass="embedcontent_large_content embedcontent_overflowy"}
             {/if}
             {if title || description}
                 <div class="s3d-highlight_area_background embedcontent_grey_background">
@@ -30,41 +30,44 @@
                         </div>
                     </div>
                 {else}
-                    <div class="${embedClass} ${layout}">
-                        {var mimeType = sakai.api.Content.getMimeType(item.fullresult)}
-                        {var thumbnail = sakai.api.Content.getThumbnail(item.fullresult)}
-                        {if embedmethod === "thumbnail" && thumbnail}
-                            {var mimeTypeDescription = sakai.config.MimeTypes[mimeType].description}
-                            <a href="/content#p=${item.link|safeURL}" title="${item.name}">
-                                <img src="${thumbnail}" alt="${mimeTypeDescription}" />
-                            </a>
-                        {elseif sakai.api.Content.hasPreview(item.fullresult) && embedmethod !== "thumbnail"}
-                            <div id="widget_documentviewer_${item.placement}" class="widget_inline"></div>
-                        {elseif sakai.config.MimeTypes[mimeType]}
-                            <a href="/content#p=${item.link}">
-                                <img src="${sakai.config.MimeTypes[mimeType].URL}" alt="${sakai.config.MimeTypes[mimeType].description}"/>
-                            </a>
-                        {else}
-                            <a href="/content#p=${item.link}">
-                                <img src="${sakai.config.MimeTypes['other'].URL}" alt="${sakai.config.MimeTypes['other'].description}"/>
-                            </a>
-                        {/if}
-                        <div class="embedcontent_details fl-push">
-                            {if name}<span><a href="/content#p=${item.link}" class="s3d-action embedcontent_include_name">${item.name}</a></span>{/if}
-                            {if details}<span class="embedcontent_include_details">${item.description|safeOutput}</span>{/if}
-                            {if download}
-                                <span>
-                                {if item._mimeType === "x-sakai/document"}
-                                    <a href="/content#p=${item.link}" class="s3d-action embedcontent_include_download" target="_blank">__MSG__OPEN_LINK__</a>
-                                {elseif item._mimeType === "x-sakai/link"}
-                                    <a href="${item.name|safeOutput}" class="s3d-action embedcontent_include_download" target="_blank">__MSG__OPEN_LINK__</a>
-                                {else}
-                                    <a href="/p/${item.link}" class="s3d-action embedcontent_include_download" target="_blank">__MSG__DOWNLOAD__</a>
-                                {/if}
-                                </span>
+                    {if item.fullresult._mimeType === 'x-sakai/collection'}
+                        <div id="widget_collectionviewer_${item.placement}" class="widget_inline"></div>
+                    {else}
+                        {var canShare = sakai.api.Content.canCurrentUserShareContent(item.fullresult)}
+                        <div class="${embedClass} ${layout} {if embedmethod === 'thumbnail'} s3d-draggable-container {/if}" data-canshare="${canShare}" data-scope="content" data-entityid="${item.fullresult._path}" {if sakai.api.Content.Collections.isCollection(item.fullresult)} data-collection="true" {/if} {if embedmethod === 'fixed'} style="width:${width}" {/if} data-align-content="${alignment}">
+                            {var mimeType = sakai.api.Content.getMimeType(item.fullresult)}
+                            {var mimeTypeDescription = sakai.api.i18n.getValueForKey(sakai.api.Content.getMimeTypeData(mimeType).description)}
+                            {var thumbnail = sakai.api.Content.getThumbnail(item.fullresult)}
+                            {if embedmethod === 'thumbnail' && thumbnail}
+                                <a href="${item.contentProfileLink}" title="${item.name}">
+                                    <img src="${thumbnail}" alt="${mimeTypeDescription}" />
+                                </a>
+                            {elseif sakai.api.Content.hasPreview(item.fullresult) && embedmethod !== 'thumbnail'}
+                                <div id="widget_documentviewer_${item.placement}" class="widget_inline"></div>
+                            {else}
+                                <a href="${item.contentProfileLink}">
+                                    <img src="${sakai.api.Content.getMimeTypeData(mimeType).URL}" alt="${mimeTypeDescription}"/>
+                                </a>
                             {/if}
+                            <div class="embedcontent_details">
+                                {if name}<span><a href="${item.contentProfileLink}" class="s3d-action embedcontent_include_name">${item.name}</a></span>{/if}
+                                {if details}<span class="embedcontent_include_details">${item.description|safeOutput}</span>{/if}
+                                {if download}
+                                    <span>
+                                    {if item._mimeType === 'x-sakai/document'}
+                                        <a href="${item.downloadLink}" class="s3d-action embedcontent_include_download" target="_blank">__MSG__VIEW_DOCUMENT__</a>
+                                    {elseif sakai.api.Content.Collections.isCollection(item)}
+                                        <a href="${item.downloadLink}" class="s3d-action embedcontent_include_download" target="_blank">__MSG__VIEW_COLLECTION__</a>
+                                    {elseif item._mimeType === 'x-sakai/link'}
+                                        <a href="${item.downloadLink}" class="s3d-action embedcontent_include_download" target="_blank">__MSG__OPEN_LINK__</a>
+                                    {else}
+                                        <a href="${item.downloadLink}" class="s3d-action embedcontent_include_download" target="_blank">__MSG__DOWNLOAD__</a>
+                                    {/if}
+                                    </span>
+                                {/if}
+                            </div>
                         </div>
-                    </div>
+                    {/if}
                 {/if}
             {/for}
             <div class="fl-push"></div>
@@ -114,9 +117,9 @@
                         </div>
                         <div class="embedcontent_footer">
                             <div class="fl-force-right">
-                                
-                                <button type="button" class="s3d-link-button s3d-bold embedcontent_dont_add">__MSG__DONT_ADD__</button>
-                                <button type="button" id="embedcontent_just_add" class="s3d-button s3d-overlay-button" disabled="disabled">__MSG__ADD_SELECTED_CONTENT__</button>
+
+                                <button type="button" class="s3d-link-button s3d-bold embedcontent_dont_add">__MSG__CANCEL__</button>
+                                <button type="button" id="embedcontent_just_add" class="s3d-button s3d-overlay-action-button" disabled="disabled">__MSG__ADD_SELECTED_CONTENT__</button>
                             </div>
                         </div>
                     </div>
@@ -148,6 +151,22 @@
                                     <div class="embedcontent_option">
                                         <input type="radio" name="style" value="thumbnail" id="thumbnail"/>
                                         <label for="thumbnail">__MSG__THUMBNAIL__</label>
+                                    </div>
+                                </div>
+                                <div class="s3d-highlight_area_background" id="embedcontent_sized_example">
+                                    <div class="embedcontent_thumbnail_content clearfix">
+                                        <img src="/devwidgets/embedcontent/images/Surfer-Medium.jpg" alt="__MSG__FIXED_WIDTH_IMAGE__" width/>
+                                        <div class="embedcontent_details">
+                                            <span><a href="#" class="s3d-action embedcontent_include_name" style="display:none">__MSG__NAME_OF_CONTENT__</a></span>
+                                            <span class="embedcontent_include_details" style="display:none">__MSG__EXTRA_DETAILS__</span>
+                                            <span><a href="#" class="s3d-action embedcontent_include_download" style="display:none">__MSG__DOWNLOAD__</a></span>
+                                        </div>
+                                    </div>
+                                    <div class="embedcontent_option">
+                                        <label for="width">__MSG__WIDTH__:</label>
+                                        <input type="text" name="width" value="400px" id="width"/>
+                                        <input type="radio" name="style" value="fixed" id="fixed"/>
+                                        <label for="fixed">__MSG__FIXED__</label>
                                     </div>
                                 </div>
                             </div>
@@ -182,23 +201,40 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div id="embedcontent_alignment">
+                                    <h2>__MSG__ALIGNMENT__</h2>
+                                    <div class="s3d-highlight_area_background">
+                                        <span>
+                                            <input type="radio" name="alignment" id="embedcontent_alignment_left" value="left"/>
+                                            <label for="embedcontent_alignment_left">__MSG__LEFT__</label>
+                                        </span>
+                                        <span>
+                                            <input type="radio" name="alignment" id="embedcontent_alignment_center" value="center"/>
+                                            <label for="embedcontent_alignment_center">__MSG__CENTER__</label>
+                                        </span>
+                                        <span>
+                                            <input type="radio" name="alignment" id="embedcontent_alignment_right" value="right"/>
+                                            <label for="embedcontent_alignment_right">__MSG__RIGHT__</label>
+                                        </span>
+                                    </div>
+                                </div>
                                 <div id="embedcontent_add_title_description" class="s3d-highlight_area_background overflowhidden">
                                     <h2>__MSG__ADD_TITLE_DESCRIPTION__</h2>
-                                    
+
                                     <button type="button" id="embedcontent_add_title_description_button" class="s3d-button s3d-header-button s3d-header-smaller-button">__MSG__ADD__&nbsp;__MSG__DOWN_ARROW__</button>
                                     <div id="embedcontent_add_title_description_fields" style="display:none">
                                         <label for="embedcontent_title">__MSG__TITLE__</label>
                                         <input type="text" id="embedcontent_title" name="title"/>
                                         <label for="embedcontent_description">__MSG__DESCRIPTION__</label>
-                                        <textarea id="embedcontent_description" name="description" title="__MSG__ENTER_A_DESCRIPTION__"></textarea>
+                                        <textarea id="embedcontent_description" name="description" placeholder="__MSG__ENTER_A_DESCRIPTION__"></textarea>
                                     </div>
                                 </div>
                             </div>
                             <div class="embedcontent_footer">
                                 <div class="fl-force-right">
                                     <p>__MSG__YOU_CAN_CHANGE__</p>
-                                    <button type="button" class="s3d-bold s3d-link-button embedcontent_dont_add">__MSG__DONT_ADD__</button>
-                                    <button type="button" id="embedcontent_button_add_selected_content" class="s3d-button s3d-overlay-button" disabled="disabled">__MSG__ADD_SELECTED_CONTENT__</button>
+                                    <button type="button" class="s3d-bold s3d-link-button embedcontent_dont_add">__MSG__CANCEL__</button>
+                                    <button type="button" id="embedcontent_button_add_selected_content" class="s3d-button s3d-overlay-action-button" disabled="disabled">__MSG__ADD_SELECTED_CONTENT__</button>
                                 </div>
                             </div>
                         </form>

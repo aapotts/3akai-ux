@@ -1,16 +1,17 @@
 {
-    "description":        "Welcome Widget",
     "enabled":            false,
     "groupdashboard":     false,
     "grouppages":         false,
     "hasSettings":        true,
     "i18n": {
-        "default":        "/devwidgets/welcome/bundles/default.properties"
+        "default": {
+            "bundle":     "/devwidgets/welcome/bundles/default.properties",
+            "name":       "Welcome widget",
+            "description":"Welcome widget"
+        }
     },
     "id":                 "welcome",
-    "name":               "Welcome Widget",
     "personalportal":     false,
-    "showinsakaigoodies": false,
     "type":               "sakai",
     "url":                "/devwidgets/welcome/welcome.html",
     "userdashboard":      false,

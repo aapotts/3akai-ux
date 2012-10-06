@@ -2,12 +2,12 @@ require(
     [
     "jquery",
     "sakai/sakai.api.core",
-    "../../../../tests/qunit/js/qunit.js",
+    "qunitjs/qunit",
     "../../../../tests/qunit/js/sakai_qunit_lib.js"
     ], 
     function($, sakai) {
     
-    require.ready(function() {
+    require(["misc/domReady!"], function(doc) {
         var testURL = "/~admin/public/test123";
 
         asyncTest("Ensure escapedHTML is returned correctly", function(){
@@ -21,6 +21,9 @@ require(
                 });
             });
         });
+
+        $(window).trigger("addlocalbinding.qunit.sakai");
+
     });
 
 });

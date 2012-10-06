@@ -1,10 +1,15 @@
 {
-    "description":"Delete content widget",
     "id":"deletecontent",
     "i18n": {
-        "default": "/devwidgets/deletecontent/bundles/default.properties"
+        "default": {
+            "bundle": "/devwidgets/deletecontent/bundles/default.properties",
+            "name": "Delete content",
+            "description":"Delete content widget"
+        },
+        "es_ES": { 
+            "bundle": "/devwidgets/deletecontent/bundles/es_ES.properties"
+        }
     },
-    "name":"Delete Content",
     "type":"core",
     "enabled":true,
     "url":"/devwidgets/deletecontent/deletecontent.html"

@@ -43,6 +43,8 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai, sakai_util) {
         // Configuration variables //
         /////////////////////////////
 
+        var $rootel = $("#" + tuid);
+
         // Help variables
         var contactToAdd = false;
 
@@ -80,11 +82,26 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai, sakai_util) {
         ///////////////////
 
         /**
+         * Disables or enables the invite button on the widget
+         * @param {Boolean} disable Flag to disable or enable the button
+         */
+        var enableDisableInviteButton = function(disable){
+            if(disable){
+                $(addToContactsFormButtonInvite).attr("disabled","disabled");
+            }else{
+                $(addToContactsFormButtonInvite).removeAttr("disabled");
+            }
+        };
+
+        /**
          * Render the templates that are needed for the add contacts widget.
          * It renders the contacts types and the personal note
          */
         var renderTemplates = function(){
-            sakai.api.Util.TemplateRenderer(addToContactsFormTypeTemplate.replace(/#/gi, ""), sakai.config.Relationships, $(addToContactsInfoTypes));
+            sakai.api.Util.TemplateRenderer(addToContactsFormTypeTemplate.replace(/#/gi, ""), {
+                "relationships": sakai.config.Relationships,
+                "sakai": sakai
+            }, $(addToContactsInfoTypes));
             var json = {
                 sakai: sakai,
                 me: sakai.data.me
@@ -98,7 +115,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai, sakai_util) {
          */
         var fillInUserInfo = function(user){
             if (user) {
-                $(addToContactsInfoDisplayName).text(user.displayName);
+                $(addToContactsInfoDisplayName, $rootel).text(user.displayName);
                 if (!user.pictureLink) {
                     user.pictureLink = sakai.api.Util.constructProfilePicture(user);
                 }
@@ -130,6 +147,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai, sakai_util) {
          * @param {String} userid
          */
         var doInvite = function(userid){
+            enableDisableInviteButton(true);
             var formValues = $(addToContactsForm).serializeObject();
             var types = formValues[addToContactsFormType.replace(/#/gi, "")];
             if (!$.isArray(types)) {
@@ -170,12 +188,13 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai, sakai_util) {
                         "targetUserId": userid
                     },
                     success: function(data){
-                        $(addToContactsDialog).jqmHide();
+                        enableDisableInviteButton(false);
+                        sakai.api.Util.Modal.close(addToContactsDialog);
                         sakai.api.Communication.sendMessage(userid, sakai.data.me, title, message, "invitation", false,false,true,"contact_invitation");
                         $(window).trigger("sakai.addToContacts.requested", [contactToAdd]);
                         //reset the form to set original note
                         $(addToContactsForm)[0].reset();
-                        sakai.api.Util.notification.show("", $(addToContactsDone).html());
+                        sakai.api.Util.notification.show("", $(addToContactsDone, $rootel).html());
                         // record that user made contact request
                         sakai.api.User.addUserProgress("madeContactRequest");
                         // display tooltip
@@ -190,12 +209,14 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai, sakai_util) {
                         $(window).trigger("update.tooltip.sakai", tooltipData);
                     },
                     error: function(xhr, textStatus, thrownError){
+                        enableDisableInviteButton(false);
                         $(addToContactsResponse).text(sakai.api.Security.saneHTML($(addToContactsErrorRequest).text()));
                     }
                 });
 
             }
             else {
+                enableDisableInviteButton(false);
                 $(addToContactsResponse).text(sakai.api.Security.saneHTML($(addToContactsErrorNoTypeSelected).text()));
             }
         };
@@ -232,7 +253,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai, sakai_util) {
             renderTemplates();
 
             // Show the layover
-            $(addToContactsDialog).jqmShow();
+            sakai.api.Util.Modal.open(addToContactsDialog);
 
         };
 
@@ -279,7 +300,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai, sakai_util) {
         });
 
         // Bind the jqModal
-        $(addToContactsDialog).jqm({
+        sakai.api.Util.Modal.setup(addToContactsDialog, {
             modal: true,
             overlay: 20,
             toTop: true,

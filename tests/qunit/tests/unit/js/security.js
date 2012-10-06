@@ -2,12 +2,12 @@ require(
     [
     "jquery",
     "sakai/sakai.api.core",
-    "../../../../tests/qunit/js/qunit.js",
+    "qunitjs/qunit",
     "../../../../tests/qunit/js/sakai_qunit_lib.js"
     ], 
     function($, sakai) {
 
-    require.ready(function() {
+    require(["misc/domReady!"], function(doc) {
 
     module("Security");
 
@@ -35,43 +35,6 @@ require(
         equals(escapedString, escapedExpected, "The escaped string is correct");
         equals(escapedString, sanedString, "The saneHTML string is the same as the escapeHTML string");
         notEqual(sakai.api.Security.saneHTML(htmlString + escapedString), htmlString + escapedString, "saneHTML properly works");
-    });
-
-    test("Safe Data Saving", function() {
-        var objToSave = {
-            "data": {
-                "key": "<script>alert(\"xss\");</script>",
-                "key2": ["<script>alert(\"xss\");</script>","<script>alert(\"xss\");</script>"],
-                "key3": {
-                    "key4": {
-                        "key5": [{
-                            "key6": "<script>alert(\"xss\");</script>"
-                        }, {
-                            "key7": "<script>alert(\"xss\");</script>"
-                        }],
-                        "key8": "<script>alert(\"xss\");</script>"
-                    }
-                }
-            }
-        };
-        var expectedObject = {
-            "data": {
-                "key": "&lt;script&gt;alert(&quot;xss&quot;);&lt;/script&gt;",
-                "key2": ["&lt;script&gt;alert(&quot;xss&quot;);&lt;/script&gt;","&lt;script&gt;alert(&quot;xss&quot;);&lt;/script&gt;"],
-                "key3": {
-                    "key4": {
-                        "key5": [{
-                            "key6": "&lt;script&gt;alert(&quot;xss&quot;);&lt;/script&gt;"
-                        }, {
-                            "key7": "&lt;script&gt;alert(&quot;xss&quot;);&lt;/script&gt;"
-                        }],
-                        "key8": "&lt;script&gt;alert(&quot;xss&quot;);&lt;/script&gt;"
-                    }
-                }
-            }
-        };
-        var sanitizedSave = sakai.api.Security.safeDataSave(objToSave);
-        same(sanitizedSave, expectedObject, "The dirty data was successfully escaped");
     });
 
     /*
@@ -454,6 +417,8 @@ require(
             }
         }
     });
+
+    $(window).trigger("addlocalbinding.qunit.sakai");
 
     });
 });

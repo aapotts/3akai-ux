@@ -39,10 +39,13 @@ require(["jquery", "sakai/sakai.api.core", "/devwidgets/documentviewer/lib/docum
      * @param {Boolean} showSettings Show the settings of the widget or not
      */
     sakai_global.documentviewer = function(tuid,showSettings,widgetData){
-        
-        var documentviewerPreview = "#" + tuid + " #documentviewer_preview";
-        var $documentviewerPreview = $(documentviewerPreview);
+
+        var $rootel = $("#" + tuid);
+        var $documentviewerPreview = $("#documentviewer_preview", $rootel);
+        var documentviewerPreviewSelector = "#" + tuid + " .documentviewer_preview";
         var templateObject = {};
+        var docType = false;
+        var data = false;
 
         var getPath = function(data) {
             return "/p/" + data["_path"];
@@ -61,7 +64,7 @@ require(["jquery", "sakai/sakai.api.core", "/devwidgets/documentviewer/lib/docum
                     }
                 }
             };
-            var container = documentviewerPreview;
+            var container = documentviewerPreviewSelector;
             DV.load(pdfDoc, {
                 container: container,
                 width: "100%",
@@ -78,21 +81,32 @@ require(["jquery", "sakai/sakai.api.core", "/devwidgets/documentviewer/lib/docum
             if (date){
                 templateObject.contentURL += "?_=" + date.getTime();
             }
-            sakai.api.Util.TemplateRenderer("documentviewer_image_template", templateObject, $("#" + tuid + " #documentviewer_image_calculatesize"));
-            var $imageRendered = $("#"+tuid+" #documentviewer_image_rendered");
-            $imageRendered.bind('load', function(ev){
-                var width = $imageRendered.width();
-                var height = $imageRendered.height();
-                // TODO we can probably avoid hardcoding the sizes here
-                // Too wide but when scaled to width won't be too tall
-                if (width > 920 && height / width * 920 <= 560){
-                    $imageRendered.addClass("documentviewer_preview_width");
-                // Too tall but when scaled to height won't be too wide
-                } else if (height > 560 && width / height * 560 <= 920){
-                    $imageRendered.addClass("documentviewer_preview_height");
+
+            $documentviewerPreview.html(
+                sakai.api.Util.TemplateRenderer('documentviewer_image_template', templateObject)
+            );
+
+            var alignment = $documentviewerPreview.parents('.embedcontent_large_content').attr('data-align-content');
+            if (alignment) {
+                switch (alignment) {
+                    case 'left':
+                        $documentviewerPreview.find('img').css('margin', '0');
+                        break;
+                    case 'right':
+                        $documentviewerPreview.find('img').css({margin: '0', display: 'inline'}).parent('div').css('text-align', 'right');
+                        break;
+                    default:
+                        break;
                 }
-                $documentviewerPreview.append($imageRendered);
-            });
+            }
+
+            // Set the width on the image if the parent embedcontent container has a width
+            if ($rootel.parents('.embedcontent_large_content').attr('style').substring(0,5) === 'width') {
+                $documentviewerPreview.find('img').css({
+                    width: $rootel.parents('.embedcontent_large_content').css('width'),
+                    'max-height': 'none'
+                });
+            }
         };
 
         var renderEmbedPreview = function(data){
@@ -101,23 +115,27 @@ require(["jquery", "sakai/sakai.api.core", "/devwidgets/documentviewer/lib/docum
 
         var renderHTMLPreview = function(data){
             sakai.api.Util.TemplateRenderer("documentviewer_html_template", templateObject, $documentviewerPreview);
-            $("#documentviewer_html_iframe").attr("src", getPath(data));
-            $("#documentviewer_html_iframe").attr("frameborder", "0");
-        };
-
-        var renderPlainTextPreview = function(data){
-            $.ajax({
-                url: getPath(data),
-                success: function(txt){
-                    sakai.api.Util.TemplateRenderer("documentviewer_plaintext_template", {plaintext: txt}, $documentviewerPreview);
-                }
-            });
+            $("#documentviewer_html_iframe", $rootel).attr("src", getPath(data));
+            $("#documentviewer_html_iframe", $rootel).attr("frameborder", "0");
         };
 
         var renderExternalHTMLPreview = function(url){
             sakai.api.Util.TemplateRenderer("documentviewer_externalhtml_template", templateObject, $documentviewerPreview);
-            $("#documentviewer_externalhtml_iframe").attr("src", url);
-            $("#documentviewer_externalhtml_iframe").attr("frameborder", "0");
+            $("#documentviewer_externalhtml_iframe", $rootel).attr("src", url);
+            $("#documentviewer_externalhtml_iframe", $rootel).attr("frameborder", "0");
+        };
+
+         var renderKalturaPlayer = function(data){
+            var html5FlashCompatibilityURL = sakai.config.kaltura.serverURL +"/p/"+sakai.config.kaltura.partnerId+"/sp/"+sakai.config.kaltura.partnerId+"00/embedIframeJs/uiconf_id/"+sakai.config.kaltura.playerId+"/partner_id/"+sakai.config.kaltura.partnerId;
+            $.getScript(html5FlashCompatibilityURL, function() {
+                var kaltura_id = data["kaltura-id"];
+                var url = sakai.config.kaltura.serverURL + "/kwidget/wid/_"+sakai.config.kaltura.partnerId+"?ui_conf_id="+sakai.config.kaltura.playerId;
+                var so = createSWFObject(url, {}, {});
+                so.addVariable('stretching','uniform');
+                so.addVariable('image', data["kaltura-thumbnail"]);
+                so.addVariable('entryId',kaltura_id);
+                so.write("documentviewer_video_" + tuid);
+            });
         };
 
         var renderVideoPlayer = function(url, preview_avatar){
@@ -238,17 +256,26 @@ require(["jquery", "sakai/sakai.api.core", "/devwidgets/documentviewer/lib/docum
             return so;
         };
 
+        var handleShown = function(e, showing) {
+            if (showing && docType === 'document') {
+                // For some reason, the document view doesn't handle hide/show very well
+                renderDocumentPreview(data);
+            }
+        };
+
         if (sakai.api.Content.hasPreview(widgetData.data)){
-            var data = widgetData.data;
+            data = widgetData.data;
             var mimeType = sakai.api.Content.getMimeType(widgetData.data);
 
-            if (sakai.api.Content.isJwPlayerSupportedVideo(mimeType)){
+            if (sakai.api.Content.isKalturaPlayerSupported(mimeType)) {
+                renderKalturaPlayer(data);
+            } else if (sakai.api.Content.isJwPlayerSupportedVideo(mimeType)){
                 renderVideoPlayer(getPath(data));
             } else if (sakai.api.Content.isJwPlayerSupportedAudio(mimeType)) {
                 renderAudioPlayer(data);
             } else if (mimeType === "application/x-shockwave-flash") {
                 renderFlashPlayer(data);
-            } else if (mimeType === "text/html") {
+            } else if (mimeType === "text/html" || mimeType === "text/plain" || mimeType ==="text/tab-separated-values" ) {
                 renderHTMLPreview(data);
             } else if (mimeType === "x-sakai/link"){
                 var pUrl = data["sakai:preview-url"];
@@ -269,11 +296,10 @@ require(["jquery", "sakai/sakai.api.core", "/devwidgets/documentviewer/lib/docum
                     pUrl = widgetData["sakai:pooled-content-url"];
                     renderExternalHTMLPreview(pUrl);
                 }
-            } else if (mimeType.substring(0, 5) === "text/") {
-                renderPlainTextPreview(data);
             } else  if (mimeType.substring(0, 6) === "image/") {
                 renderImagePreview(getPath(data), data["_bodyLastModified"]);
             } else if (data["sakai:pagecount"]){
+                docType = 'document';
                 renderDocumentPreview(data);
             }
         }
@@ -281,6 +307,7 @@ require(["jquery", "sakai/sakai.api.core", "/devwidgets/documentviewer/lib/docum
         // Indicate that the widget has finished loading
         sakai_global.documentviewer.isReady = true;
         $(window).trigger("ready.documentviewer.sakai", {});
+        $(window).bind(tuid + '.shown.sakai', handleShown);
 
     };
     sakai.api.Widgets.widgetLoader.informOnLoad("documentviewer");

@@ -1,12 +1,335 @@
-/* rSmart skin for full-width pages */
-.rsmart-full-width .fixed-container.s3d-main-container{width:auto;display:table;}
-.rsmart-full-width .s3d-twocolumn{overflow:hidden;min-width:960px;display:table;margin-left:auto;margin-right:auto;}
-.rsmart-full-width .s3d-page-fullcolumn-padding{width:auto;min-width:920px;}
-.rsmart-full-width .s3d-container-shadow-right,
-.rsmart-full-width .s3d-container-shadow-left{z-index:-1;}
-.rsmart-full-width .fl-container-flex{display:table;}
-.rsmart-full-width .s3d-page-column-right{width:auto;min-width:773px;margin-left:190px;}
-.rsmart-full-width .s3d-page-column-left{position:absolute;}
+/* rSmart overrides */
+.s3d-widget-container .s3d-contentpage-title:hover {
+  cursor: pointer;
+}
 
-.rsmart-full-width #group_create_new_area_container {position:relative;}
-.rsmart-full-width .addarea_widget .addarea_dropdown_content{margin-top:42px;}
+.s3d-dropdown-menu ul li button {
+  text-decoration: none;
+  display: block;
+  padding: 5px 6px;
+}
+
+.s3d-dropdown-menu ul li:hover button {
+  color: #f3f3f3;
+}
+
+.s3d-dropdown-menu ul li button {
+  color: #2683bc;
+  font-size: 12px;
+}
+
+.s3d-button.s3d-overlay-button.no-pad {
+  margin-top: -9px;
+}
+
+.s3d-button.s3d-overlay-button.grey {
+  color: #666;
+}
+
+.s3d-page-fullcolumn-padding {
+  padding: 20px;
+}
+
+/* ACAD-932 Fix the line-height of the paragraphs inside TinyMCE */
+.sakaidocs_widget #s3d-page-container p,
+.sakaidocs_widget #s3d-page-container p span,
+.mceContentBody p,
+.mceContentBody p span {
+    line-height: 1.2em;
+}
+
+/* overrides for sakai.create_new_account.css */
+label.required {
+  background-image: url("/dev/images/required.png");
+  background-position: top left;
+  background-repeat: no-repeat;
+  padding-left: 15px;
+}
+
+#signup_form_container .signup_form_column select {
+  border: 1px solid #e0e1e2;
+  height: 23px;
+  width: 216px;
+  color: #333;
+}
+
+.signup_form_error {
+  border: 3px solid #ffba00 !important;
+  margin-bottom: 5px !important;
+}
+
+label.signup_form_error_label {
+  margin: 28px 8px 9px 0px !important;
+}
+
+.captcha_container {
+  margin: 20px 0 0 20px;
+}
+
+#signup_institution_header {
+  float: left;
+  width: 100%;
+  margin-top: 25px;
+}
+
+.recaptchatable {
+  float: none;
+}
+
+#save_account {
+  margin: 20px;
+}
+
+/* Overrides for footer.css */
+#footer_logo {
+  background-image: url('/dev/skins/rsmart/images/footer_logo_rsmart.png') !important;
+  width: 110px !important;
+  height: 40px !important;
+}
+
+#footer_links {
+  margin-top:12px;
+}
+
+/* Overrides for institutionalskinning.css */
+.institutionalskinning_widget #institutionalskinning_logo {
+  background-image: url('/dev/skins/rsmart/images/rsmart_liberate_learning.png') !important;
+}
+
+/* Overrides for sitespages.css */
+.groupWrapper {
+  min-height: 40px;
+}
+
+.topnavigation_user_options_login_sign_in_error_margin input {
+  border: none !important;
+}
+
+.topnavigation_user_options_login_sign_in_error_margin input.login-container-textfield {
+  border: 2px solid #FFBA00 !important;
+}
+
+.topnavigation_right {
+  margin-right: 5px;
+}
+
+/**
+ * 100% width skin
+ */
+
+/* Primary layout */
+#topnavigation_container,
+.s3d-header .fixed-container,
+.fixed-container,
+.fixed-container.s3d-main-container,
+.categories_widget,
+.s3d-page-header,
+#allcategories_items_content {
+  width: auto !important;
+  min-width: 960px;
+}
+
+.fixed-container.s3d-main-container.s3d-twocolumn {
+  min-width: 770px;
+  padding-left: 190px !important;
+}
+
+.s3d-container-shadow-left, .s3d-container-shadow-right {
+  display: none !important;
+}
+
+.s3d-page-column-right {
+  width: auto !important;
+  float: none !important;
+}
+
+.s3d-page-column-left {
+  position: absolute;
+  margin-left: -193px !important;
+}
+
+/* Top branding widget */
+.branding_widget {
+  min-width: 960px;
+}
+
+/* Explore page */
+.explore > .fixed-container {
+  padding-left: 0px !important;
+}
+
+/* Footer */
+.footer_main {
+  width: auto !important;
+  min-width: 960px !important;
+}
+.footer_main .fixed-container {
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+  min-width: 920px;
+  width: auto !important;
+}
+
+.institutionalskinning_widget #institutionalskinning_logo {
+  background: url('/dev/skins/rsmart/images/rsmart_liberate_learning.png') no-repeat scroll center top #FFF !important;
+}
+
+#explore_content_first_column, .explore_content_first_column {
+  width: 77% !important;
+}
+
+#explore_content_second_column {
+  width: 20% !important;
+}
+
+.recentactivity_widget .recentactivity_activity_item_container {
+  width: auto !important;
+}
+
+.categories_items_content {
+  width: auto !important;
+  min-width: 824px !important;
+}
+
+/* Scroll to top button - disable it */
+#topnavigation_scroll_to_top_container {
+  display: none !important;
+}
+
+/* Dashboard widget widths */
+.fl-col-flex3 .fl-col {
+  margin-left: 0.25% !important;
+  margin-right: 0.25% !important;
+  padding-left: 0.25% !important;
+  padding-right: 0.25% !important;
+  width: 32.33% !important;
+}
+
+.fl-col-flex2 .fl-col {
+  margin-left: 0.25% !important;
+  margin-right: 0.25% !important;
+  padding-left: 0.25% !important;
+  padding-right: 0.25% !important;
+  width: 48.85% !important;
+}
+
+/* Profile secions on user dashboard */
+.displayprofilesection_field {
+  width: 100% !important;
+  min-width: 720px !important;
+}
+
+/* Create group */
+#newcreategroup_container #newcreategroup_group_data_container,
+#newcreategroup_container #newcreategroup_group_members_container {
+  width: 46% !important;
+}
+
+/* Entity widget */
+.show #entity_container {
+  min-width: 925px !important;
+}
+
+#entity_container .s3d-dropdown-list {
+  z-index: 1;
+}
+
+/* Search */
+.s3d-search-header, .s3d-search-results {
+  width: auto !important;
+}
+
+/* Carousels */
+.categories_widget #categories_items_content {
+  margin: 0 auto !important;
+}
+
+#carousel_container {
+  width: 719px !important;
+  margin: 0 auto !important;
+}
+
+/* Collections in the content preview */
+.contentpreview_other_preview {
+  max-width: none !important;
+  min-width: 920px;
+}
+
+/* Collection viewer in a document */
+.has_nav .collectionviewer_widget #contentpreview_fullsize_preview {
+  min-width: 712px !important;
+  width: auto !important;
+}
+
+.has_nav .collectionviewer_widget .documentviewer_widget {
+  min-width: 682px !important;
+  width: auto !important;
+}
+
+/* Inserterbar widget */
+#inserterbar_widget {
+  right: 0px !important;
+}
+
+/* Update button on user profiles */
+.profile-section-save-button {
+  float: left !important;
+  margin-left: 60% !important;
+}
+
+/* Registration Page */
+#signup_header {
+  background-position: center top !important;
+  width: 100% !important;
+}
+
+#signup_header_bg {
+  float: none !important;
+  width: 901px !important;
+  height: 467px;
+  margin: 0 auto !important;
+  background:url("/dev/images/signup_header_bg.png") repeat scroll left top transparent;
+}
+
+.signup_comments {
+  width: 960px !important;
+  margin: 0 auto !important;
+}
+
+.signup_comments h2 {
+  width: 100%;
+  clear: both;
+}
+
+/* Content Profile */
+#content_profile_right_metacomments {
+  width: 65% !important;
+}
+
+#content_profile_bottom_container .fl-container-245 {
+  width: 25% !important;
+}
+
+#contentmetadata_container {
+  width: 100% !important;
+}
+
+.fl-container-650 #contentmetadata_description_container,
+.fl-container-650 #contentmetadata_tags_container,
+.fl-container-650 #contentmetadata_details_container,
+.fl-container-650 #contentmetadata_locations_container,
+.fl-container-650 #contentmetadata_copyright_container,
+.fl-container-650 #contentmetadata_url_container {
+  width: 95% !important;
+  margin: 0 2.5% !important;
+}
+
+.fl-container-650 #contentmetadata_container .s3d-widget-footer {
+  width: 100% !important;
+  padding-right: 0 !important;
+  padding-left: 0 !important;
+}
+
+#contentmetadata_show_more.s3d-link-button {
+  margin-left: 10px;
+}

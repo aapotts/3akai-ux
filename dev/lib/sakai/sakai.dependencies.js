@@ -92,13 +92,16 @@ if (!(Array.indexOf || [].indexOf)) {
 require(
     {
         baseUrl:"/dev/lib/",
+        //If you change these paths, please check out
+        //https://confluence.sakaiproject.org/x/sq_CB
         paths: {
             "jquery-plugins": "jquery/plugins",
-            "jquery": "jquery/jquery-1.5.2",
-            "jquery-ui": "jquery/jquery-ui-1.8.13.custom",
+            "jquery": "jquery/jquery-1.7.0",
+            "jquery-ui": "jquery/jquery-ui-1.8.16.custom",
+            "underscore": "misc/underscore",
             "config": "../configuration"
         },
-        priority: ["jquery"]
+        priority: ["jquery", "underscore"]
     }
 );
 
@@ -107,33 +110,35 @@ require(
         "jquery",
         "sakai/sakai.api.core",
         "sakai/sakai.jquery-extensions",
-        "config/config",
-        "config/config_custom",
+        "config/dynamicconfig",
+        "underscore",
         "jquery-ui",
         "jquery-plugins/jquery.validate",
-        "jquery-plugins/jquery.autoSuggest.sakai-edited",
+        "jquery-plugins/jquery.autoSuggest",
         "misc/l10n/globalize",
-        "misc/underscore",
         "jquery-plugins/jquery.json",
         "misc/google/html-sanitizer",
         "misc/querystring",
-        "fluid/3akai_Infusion",
+        "jquery-plugins/jquery.equalheights",
+        "jquery-plugins/jquery.contentchange.sakai-edited",
         "jquery-plugins/jquery.timeago",
         "jquery-plugins/jqmodal.sakai-edited",
         "jquery-plugins/jquery.cookie",
         "jquery-plugins/jquery.ba-bbq",
-        "jquery-plugins/jquery.fieldselection",
-        "jquery-plugins/jquery.pager",
+        "jquery-plugins/jquery.pager.sakai-edited",
         "jquery-plugins/jquery.threedots",
         "jquery-plugins/jquery.form",
-        "jquery-plugins/jquery.MultiFile",
-        "jquery-plugins/jquery.hoverIntent.sakai-edit",
+        "jquery-plugins/jquery.fileupload",
+        "jquery-plugins/jquery.MultiFile.sakai-edited",
         "jquery-plugins/jsTree/jquery.jstree.sakai-edit",
         "jquery-plugins/gritter/jquery.gritter.sakai-edit",
-        "jquery-plugins/jquery.jcarousel.sakai-edit"
+        "jquery-plugins/jquery.jcarousel.sakai-edit",
+        "jquery-plugins/jquery.jeditable.sakai-edited",
+        "jquery-plugins/jquery.tagcloud",
+        "jquery-plugins/jquery.infinitescroll-sakai"
     ],
     function($, sakai) {
-        require.ready(function() {
+        require(['misc/domReady!'], function(doc) {
             sakai.api.User.loadMeData(function(success, data) {
                 sakai.api.Util.startup(data);
                 // Start i18n

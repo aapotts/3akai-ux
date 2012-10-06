@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations under the License.
  */
 // load the master sakai object to access all Sakai OAE API methods
-require(["jquery", "sakai/sakai.api.core"], function($, sakai){
+require(["jquery", "sakai/sakai.api.core", "underscore"], function($, sakai, _){
 
     /**
      * @name sakai.userpermissions
@@ -45,7 +45,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai){
                 page = sakai_global.user.pubdata.structure0[currentPath];
             }
             var permission = page._view;
-            $("#userpermissions_area_title").text(sakai.api.i18n.General.process(page._title, sakai.api.User.data.me));
+            $("#userpermissions_area_title").text(sakai.api.i18n.General.process(page._title));
             $("#userpermissions_content_container").html(sakai.api.Util.TemplateRenderer("userpermissions_content_template", {
                 "permission": permission
             }));
@@ -62,7 +62,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai){
         var permissionsSet = function(success, data){
             if (success) {
                 // Hide the dialog
-                $("#userpermissions_container").jqmHide();
+                sakai.api.Util.Modal.close('#userpermissions_container');
                 // Show gritter notification
                 sakai.api.Util.notification.show($("#userpermissions_notification_title").text(), $("#userpermissions_notification_body").text());
             }else{
@@ -105,10 +105,10 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai){
         /////////////////////////////////
 
         var initializeOverlay = function(){
-            $("#userpermissions_container").jqmShow();
+            sakai.api.Util.Modal.open('#userpermissions_container');
         };
 
-        $("#userpermissions_container").jqm({
+        sakai.api.Util.Modal.setup('#userpermissions_container', {
             modal: true,
             overlay: 20,
             toTop: true,

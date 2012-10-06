@@ -12,14 +12,12 @@
             <!-- Show the create new topic screen -->
             <div id="discussion_create_new_topic" style="display:none;">
                 <form>
-                    <label for="discussion_create_new_topic_title" class="s3d-bold">
-                        __MSG__TOPIC_TITLE__
-                    </label>
-                    <input type="text" id="discussion_create_new_topic_title" class="required"/>
-                    <label for="discussion_create_new_topic_message_text" class="s3d-bold">
-                        __MSG__MESSAGE_TEXT__
-                    </label>
-                    <textarea id="discussion_create_new_topic_message_text" class="required" rows="6" name="Message Text" placeholder="__MSG__ENTER_YOUR_MESSAGE__"></textarea>
+                    <div class="s3d-form-field-wrapper">
+                        <label for="discussion_create_new_topic_title" class="s3d-bold s3d-input-label s3d-input-label-above">__MSG__TOPIC_TITLE__</label>
+                        <input type="text" id="discussion_create_new_topic_title" name="discussion_topic_title" class="required s3d-input-full-width"/>
+                        <label for="discussion_create_new_topic_message_text" class="s3d-bold s3d-input-label s3d-input-label-above">__MSG__MESSAGE_TEXT__</label>
+                        <textarea id="discussion_create_new_topic_message_text" class="required s3d-input-full-width" rows="6" name="discussion_topic_text" placeholder="__MSG__ENTER_YOUR_MESSAGE__"></textarea>
+                    </div>
                     <div class="fl-force-right">
                         <button type="button" class="s3d-button s3d-link-button" id="discussion_dont_add_topic">__MSG__DONT_ADD_TOPIC__</button>
                         <button type="submit" class="s3d-button s3d-overlay-button" id="discussion_add_topic">__MSG__ADD_TOPIC__</button>
@@ -42,6 +40,7 @@
 <div id="discussion_no_initial_topic_template"><!--
     {if settings.addtopic == true}
         <button id="discussion_add_new_topic" class="s3d-button s3d-regular-links s3d-link-button">__MSG__ADD_NEW_TOPIC__</button>
+        <div class="fl-force-right discussion_not_changeable" style="display:none">(__MSG__ERROR_NOT_CHANGEABLE__)</div>
         <hr class="discussion_horizontal_rule"/>
         __MSG__NO_TOPICS_TO_DISPLAY_CLICK_TO_ADD__
     {else}
@@ -50,29 +49,30 @@
 --></div>
 
 <div id="discussion_topic_reply_template"><!--
-    {if typeof(postId) != "undefined"}<button class="s3d-button s3d-link-button" name="reply_${postId}" style="display:none">&nbsp;</button>{/if}
-    {if quoted}
-        <span id="discussion_topic_reply_quoted_user" style="display:none;">${quotedUser}</span>
-        <label for="discussion_topic_reply_text" class="s3d-bold">
-            __MSG__QUOTED_TEXT__
-        </label>
-        <textarea id="discussion_topic_quoted_text" class="required" rows="4" name="quoted_text" title="__MSG__QUOTED_TEXT__">${quotedMessage|safeOutput}</textarea>
-    {/if}
-    <label for="discussion_topic_reply_text" class="s3d-bold">
-        __MSG__MESSAGE_TEXT__
-    </label>
-    <textarea id="discussion_topic_reply_text" class="required" rows="6" name="message_text" placeholder="__MSG__ENTER_YOUR_MESSAGE__">{if edit == true}${body}{/if}</textarea>
-    <div class="fl-force-right">
-        {if edit == true}
-            <button type="button" class="s3d-button s3d-link-button" id="discussion_dont_save_edit">__MSG__DONT_SAVE__</button>
-            <button type="submit" class="s3d-button s3d-overlay-button" id="discussion_save_edit">__MSG__SAVE__</button>
-            <hr class="fl-push fl-hidden"/>
-        {else}
-            <button type="button" class="s3d-button s3d-link-button" id="discussion_dont_add_reply">__MSG__DONT_REPLY__</button>
-            <button type="submit" class="s3d-button s3d-overlay-button" id="discussion_add_reply">__MSG__REPLY__</button>
-            <hr class="fl-push fl-hidden"/>
+    <form class="discussion_{if edit === true}edit{else}reply{/if}_form s3d-form-field-wrapper">
+        {if quoted}
+            <span id="discussion_topic_reply_quoted_user" style="display:none;">${quotedUser}</span>
+            <label for="discussion_topic_quoted_text" class="s3d-bold s3d-input-label s3d-input-label-above">
+                __MSG__QUOTED_TEXT__
+            </label>
+            <textarea id="discussion_topic_quoted_text" class="required s3d-input-full-width" rows="4" name="quoted_text" title="__MSG__QUOTED_TEXT__">${quotedMessage|safeOutput}</textarea>
         {/if}
-    </div>
+        <label for="discussion_topic_reply_text" class="s3d-bold s3d-input-label s3d-input-label-above">
+            __MSG__MESSAGE_TEXT__
+        </label>
+        <textarea id="discussion_topic_reply_text" class="required  s3d-input-full-width" rows="6" name="message_text" placeholder="__MSG__ENTER_YOUR_MESSAGE__">{if edit == true}${body}{/if}</textarea>
+        <div class="fl-force-right">
+            {if edit == true}
+                <button type="button" class="s3d-button s3d-link-button" id="discussion_dont_save_edit">__MSG__DONT_SAVE__</button>
+                <button type="submit" class="s3d-button s3d-overlay-button" id="discussion_save_edit">__MSG__SAVE__</button>
+                <hr class="fl-push fl-hidden"/>
+            {else}
+                <button type="button" class="s3d-button s3d-link-button" id="discussion_dont_add_reply">__MSG__DONT_REPLY__</button>
+                <button type="submit" class="s3d-button s3d-overlay-button" id="discussion_add_reply">__MSG__REPLY__</button>
+                <hr class="fl-push fl-hidden"/>
+            {/if}
+        </div>
+    </form>
 --></div>
 
 <div id="discussion_topic_newly_posted_reply_template"><!--
@@ -81,8 +81,9 @@
             <div class="s3d-highlight_area_background_tinner"></div>
         </div>
         <div class="discussion_entity_container">
-            <img src="${post.message.profile.pictureImg}" alt="${sakai.api.User.getDisplayName(post.message.profile)}" class="discussion_entity_picture"/>
-            <span class="discussion_poster_name">${sakai.api.User.getDisplayName(post.message.profile)}</span>
+            {var displayName = sakai.api.User.getDisplayName(post.message.profile)}
+            <img src="${post.message.profile.pictureImg}" alt="${displayName}" class="discussion_entity_picture"/>
+            <a href="${post.message.profile.homePath}" title="__MSG__VIEW_USERS_PROFILE__" class="discussion_poster_name">${displayName}</a>
             <span class="discussion_posting_date">${post.message["sakai:createdOn"]}<span class="discussion_updating_date" {if !post.message["sakai:editedOn"]}style="display:none;"{/if}>(__MSG__EDITED_BY__ <span></span>)</span></span>
             <hr class="fl-push fl-hidden"/>
         </div>
@@ -94,14 +95,14 @@
                         <div class="s3d-highlight_area_background_white_content_tinner"></div>
                     </div>
                     <p><span class="discussion_reply_contents_text_quoted">${post.message["sakai:quoted"].by}</span> __MSG__WROTE__:</p>
-                    <p class="discussion_reply_contents_text">${post.message["sakai:quoted"].quote|safeOutput}</p>
+                    <p class="discussion_reply_contents_text" data-source-text="${post.message["sakai:quoted"].quote|saneHTMLAttribute}">${post.message["sakai:quoted"].quote|safeOutput}</p>
                     <div class="s3d-highlight_area_background_white_content_bl">
                         <div class="s3d-highlight_area_background_white_content_binner"></div>
                     </div>
                 </div>
             {/if}
 
-            <div><span class="discussion_post_message">${post.message["sakai:body"]|safeOutput}</span></div>
+            <div><span class="discussion_post_message" data-source-text="${post.message["sakai:body"]|saneHTMLAttribute}">${post.message["sakai:body"]|safeOutput}</span></div>
 
             {if settings.anon != true && settings.canreply == true}
                 <span class="discussion_message_options">
@@ -129,8 +130,9 @@
 <div id="discussion_list_topics_template"><!--
     {if settings.addtopic == true}
         <button id="discussion_add_new_topic" class="s3d-button s3d-regular-links s3d-link-button">__MSG__ADD_NEW_TOPIC__</button><span class="discussion_pipe_divider">|</span>
+        <div class="fl-force-right discussion_not_changeable" style="display:none">(__MSG__ERROR_NOT_CHANGEABLE__)</div>
     {/if}
-    <button id="discussion_expand_all" class="s3d-button s3d-regular-links discussion_collapse_all s3d-link-button">__MSG__COLLAPSE_ALL__</button>
+    <button id="discussion_expand_all" class="s3d-button s3d-regular-links discussion_expand_all s3d-link-button">__MSG__EXPAND_ALL__</button>
     <hr class="discussion_horizontal_rule"/>
     {for topic in postData}
         <div id="discussion_post_${topic.post["sakai:id"]}" class="discussion_topic_container">
@@ -138,15 +140,16 @@
                 <button type="button" class="s3d-button s3d-overlay-button discussion_reply_topic" id="discussion_reply_topic">__MSG__REPLY__</button>
             {/if}
             <h1 class="discussion_topic_subject">${topic.post["sakai:subject"]|safeOutput}</h1>
-            <button class="discussion_show_topic_replies s3d-button s3d-link-button"><div class="discussion_replies_icon discussion_show_replies_icon"></div><span class="discussion_topic_number_of_replies"><span class="discussion_number_of_replies">${topic.replies.length}</span> __MSG__REPLIES__</span></button>
+            <button class="discussion_show_topic_replies s3d-button s3d-link-button"><div class="discussion_replies_icon discussion_show_replies_icon"{if topic.replies.length === 0} style="display:none;"{/if}></div><span class="discussion_topic_number_of_replies"><span class="discussion_number_of_replies">${topic.replies.length}</span> __MSG__REPLIES__</span></button>
 
             <div class="s3d-highlight_area_background" id="${topic.post["sakai:id"]}">
                 <div class="s3d-highlight_area_background_tl">
                     <div class="s3d-highlight_area_background_tinner"></div>
                 </div>
                 <div class="discussion_entity_container">
-                    <img src="${topic.post.profile[0].pictureImg}" alt="${sakai.api.User.getDisplayName(topic.post.profile[0])}" class="discussion_entity_picture"/>
-                    <span class="discussion_poster_name">${sakai.api.User.getDisplayName(topic.post.profile[0])}</span>
+                    {var displayName = sakai.api.User.getDisplayName(topic.post.profile[0])}
+                    <img src="${topic.post.profile[0].pictureImg}" alt="${displayName}" class="discussion_entity_picture"/>
+                    <a href="${topic.post.profile[0].homePath}" class="discussion_poster_name" title="__MSG__VIEW_USERS_PROFILE__">${displayName}</a>
                     <span class="discussion_posting_date">${topic.post["sakai:createdOn"]}<span class="discussion_updating_date" {if !topic.post["sakai:editedOn"]}style="display:none;"{/if}>{if topic.post["sakai:editedOn"]} (__MSG__EDITED_BY__ <span>${topic.post["sakai:editedBy"]} ${topic.post["sakai:editedOn"]}</span>) {else} (__MSG__EDITED_BY__ <span></span>){/if}</span></span>
                     <hr class="fl-push fl-hidden"/>
                 </div>
@@ -183,8 +186,9 @@
                             {if reply.post["sakai:deleted"] && reply.post["sakai:deleted"] == "true"}
                                 <button class="discussion_hide_reply s3d-button s3d-regular-links s3d-link-button"><span>__MSG__HIDE__</span><span style="display:none;">__MSG__SHOW__</span></button>
                             {/if}
-                            <img src="${reply.post.profile[0].pictureImg}" alt="${sakai.api.User.getDisplayName(reply.post.profile[0])}" class="discussion_entity_picture"/>
-                            <span class="discussion_poster_name">${sakai.api.User.getDisplayName(reply.post.profile[0])}</span>
+                            {var displayName = sakai.api.User.getDisplayName(reply.post.profile[0])}
+                            <img src="${reply.post.profile[0].pictureImg}" alt="${displayName}" class="discussion_entity_picture"/>
+                            <a href="${reply.post.profile[0].homePath}" class="discussion_poster_name" title="__MSG__VIEW_USERS_PROFILE__">${displayName}</a>
                             <span class="discussion_posting_date">${reply.post["sakai:createdOn"]}<span class="discussion_updating_date" {if !reply.post["sakai:editedOn"]}style="display:none;"{/if}>{if reply.post["sakai:editedOn"]} (__MSG__EDITED_BY__ <span>${reply.post["sakai:editedBy"]} ${reply.post["sakai:editedOn"]}</span>) {else} (__MSG__EDITED_BY__ <span></span>){/if}</span></span>
                             {if reply.post["sakai:deleted"] && reply.post["sakai:deleted"] == "true"}
                                 <span class="discussion_delete_date">(__MSG__DELETED_BY__ ${reply.post["sakai:deletedBy"]} ${reply.post["sakai:deletedOn"]})</span>
@@ -246,7 +250,6 @@
                     </div>
                 {/for}
             </div>
-
             <div id="discussion_topic_reply_container" style="display:none;"></div>
             {if settings.anon != true && settings.canreply == true}
                 <button type="button" class="s3d-button s3d-overlay-button discussion_reply_topic discussion_reply_topic_bottom" id="discussion_reply_topic" style="display:none;">
@@ -284,7 +287,7 @@
             </div>
             <div class="fl-force-right">
                 <button type="button" class="s3d-button s3d-link-button" id="discussion_settings_cancel">__MSG__DONT_SAVE__</button>
-                <button type="button" class="s3d-button s3d-overlay-button" id="discussion_settings_submit">__MSG__SAVE_SETTINGS__</button>
+                <button type="button" class="s3d-button s3d-overlay-action-button" id="discussion_settings_submit">__MSG__SAVE_SETTINGS__</button>
                 <hr class="fl-push fl-hidden"/>
             </div>
         </div>

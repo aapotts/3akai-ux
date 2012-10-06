@@ -121,9 +121,9 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 
             // list if items are managers or members
             if (listType === "managers") {
-                $listpeople_count_items.html(sakai.api.i18n.Widgets.getValueForKey("listpeople", "", "MANAGERS"));
+                $listpeople_count_items.html(sakai.api.i18n.getValueForKey("MANAGERS", "listpeople"));
             } else if (listType === "members") {
-                $listpeople_count_items.html(sakai.api.i18n.Widgets.getValueForKey("listpeople", "", "MEMBERS"));
+                $listpeople_count_items.html(sakai.api.i18n.getValueForKey("MEMBERS", "listpeople"));
             }
 
             // get data
@@ -141,7 +141,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                         if (typeof sakai.data.me.user.userid !== "undefined") {
                             if (data.managers.length !== 0) {
                                 for (var i in data.managers) {
-                                    if (data.managers[i]["rep:userId"] === sakai.data.me.user.userid) {
+                                    if (data.managers.hasOwnProperty(i) && data.managers[i]["rep:userId"] === sakai.data.me.user.userid) {
                                         sakai_global.config.listpeople[listType].anon = false;
                                         break;
                                     }
@@ -438,10 +438,10 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                         sakai_global.data.listpeople[listType].total += 1;
                         if (sakai.config.MimeTypes[resultObject["jcr:mimeType"]]) {
                             sakai_global.data.listpeople[listType].userList[resultObject["_path"]]['avatar'] = sakai.config.MimeTypes[resultObject["jcr:mimeType"]].URL;
-                            sakai_global.data.listpeople[listType].userList[resultObject["_path"]]['mimeTypeDescripton'] = sakai.api.i18n.General.getValueForKey(sakai.config.MimeTypes[resultObject["jcr:mimeType"]].description);
+                            sakai_global.data.listpeople[listType].userList[resultObject["_path"]]['mimeTypeDescripton'] = sakai.api.i18n.getValueForKey(sakai.config.MimeTypes[resultObject["jcr:mimeType"]].description);
                         } else {
                             sakai_global.data.listpeople[listType].userList[resultObject["_path"]]['avatar'] = "/dev/images/mimetypes/empty.png";
-                            sakai_global.data.listpeople[listType].userList[resultObject["_path"]]['mimeTypeDescripton'] = sakai.api.i18n.General.getValueForKey(sakai.config.MimeTypes.other.description);
+                            sakai_global.data.listpeople[listType].userList[resultObject["_path"]]['mimeTypeDescripton'] = sakai.api.i18n.getValueForKey(sakai.config.MimeTypes.other.description);
                         }
                         if (!sakai_global.data.listpeople[listType].userList[resultObject["_path"]]["subNameInfo"]) {
                             sakai_global.data.listpeople[listType].userList[resultObject["_path"]]["subNameInfo"] = resultObject[iSubNameInfoContent];

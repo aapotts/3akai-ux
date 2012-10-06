@@ -24,7 +24,7 @@
  * /dev/lib/jquery/plugins/jquery.form.js (ajaxForm)
  */
 
-/*global, fluid, window, $ */
+/*global, window, $ */
 
 require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 
@@ -57,6 +57,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
         // Elements
         var uploadnewversionUploadContentForm = "#uploadnewversion_upload_content_form";
         var uploadnewversionDoUpload = ".uploadnewversion_doupload";
+        var $uploadnewversionUploading = $("#uploadnewversion_uploading");
 
 
         ////////////
@@ -64,6 +65,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
         ////////////
 
         var doUploadVersion = function(){
+            sakai.api.Util.Modal.open($uploadnewversionUploading);
             $(uploadnewversionUploadContentForm).attr("action", "/system/pool/createfile." + sakai_global.content_profile.content_data.data["_path"]);
             $(uploadnewversionUploadContentForm).ajaxForm({
                 success: function(data){
@@ -80,7 +82,8 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                                url: sakai_global.content_profile.content_data["content_path"] + ".save.json",
                                type: "POST",
                                success: function(data){
-                                   $uploadnewversionContainer.jqmHide();
+                                   sakai.api.Util.Modal.close($uploadnewversionUploading);
+                                   sakai.api.Util.Modal.close($uploadnewversionContainer);
                                    sakai_global.content_profile.content_data.data = data;
                                    $(window).trigger("updated.version.content.sakai");
                                    $(window).trigger("update.versions.sakai", {
@@ -90,11 +93,13 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                                    });
                                },
                                error: function(err){
+                                   sakai.api.Util.Modal.close($uploadnewversionUploading);
                                    debug.error(err);
                                }
                            });
                        },
                        error: function(err){
+                           sakai.api.Util.Modal.close($uploadnewversionUploading);
                            debug.error(err);
                        }
                     });
@@ -113,25 +118,20 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
          * Initialize the modal dialog
          */
         var initializeJQM = function(){
-            $uploadnewversionContainer.jqm({
+            sakai.api.Util.Modal.setup($uploadnewversionContainer, {
                 modal: true,
                 overlay: 20,
                 toTop: true
             });
 
-            // position dialog box at users scroll position
-            var htmlScrollPos = $("html").scrollTop();
-            var docScrollPos = $(document).scrollTop();
-            if (htmlScrollPos > 0) {
-                $uploadnewversionContainer.css({
-                    "top": htmlScrollPos + 100 + "px"
-                });
-            } else if (docScrollPos > 0) {
-                $uploadnewversionContainer.css({
-                    "top": docScrollPos + 100 + "px"
-                });
-            }
-            $uploadnewversionContainer.jqmShow();
+            sakai.api.Util.Modal.open($uploadnewversionContainer);
+
+            sakai.api.Util.Modal.setup($uploadnewversionUploading, {
+                modal: true,
+                overlay: 20,
+                toTop: true
+            });
+            $uploadnewversionUploading.css("z-index", "4002");
         };
 
         var initializeMultiFile = function(){

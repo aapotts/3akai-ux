@@ -67,30 +67,22 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                 commentCount: sakai.api.Content.getCommentCount(result),
                 placeCount: sakai.api.Content.getPlaceCount(result),
                 path: "/p/" + result["_path"],
-                type: sakai.api.i18n.General.getValueForKey(sakai.config.MimeTypes.other.description),
+                type: sakai.api.i18n.getValueForKey(sakai.config.MimeTypes.other.description),
                 type_img_url: sakai.config.MimeTypes.other.URL,
                 thumbnail: sakai.api.Content.getThumbnail(result),
                 size: "",
                 _mimeType: sakai.api.Content.getMimeType(result),
                 "_mimeType/page1-small": result["_mimeType/page1-small"],
-                "_path": result["_path"]
+                "_path": result["_path"],
+                canShare: sakai.api.Content.canCurrentUserShareContent(result)
             };
             // set the mimetype and corresponding image
-            if(item._mimeType) {
+            if(item._mimeType && sakai.config.MimeTypes[item._mimeType]) {
                 // we have a recognized file type - set the description and img URL
-                item.type = sakai.api.i18n.General.getValueForKey(sakai.config.MimeTypes[item._mimeType].description);
+                item.type = sakai.api.i18n.getValueForKey(sakai.config.MimeTypes[item._mimeType].description);
                 item.type_img_url = sakai.config.MimeTypes[item._mimeType].URL;
             }
 
-            // set file name without the extension
-            // be aware that links don't have an extension
-            var lastDotIndex = result["sakai:pooled-content-file-name"].lastIndexOf(".");
-            if(lastDotIndex !== -1) {
-                if (item["_mimeType"] !== "x-sakai/link") {
-                    // extension found
-                    item.name = result["sakai:pooled-content-file-name"].slice(0, lastDotIndex);
-                }
-            }
             item.name = sakai.api.Util.applyThreeDots(item.name, $(".mycreatecontent_widget .s3d-widget-createcontent").width() - 80, {max_rows: 1,whole_word: false}, "s3d-bold");
 
             // set the file size
@@ -169,16 +161,20 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                 for (var i = 0; i < data.groups.length; i++){
                     if (!data.groups[i]["sakai:excludeSearch"] && data.groups[i]["sakai:group-title"]) {
                         var connection = data.groups[i];
-                        var id, name, picture, namePossessive;
+                        var id;
+                        var linkTitle;
+                        var name;
+                        var namePossessive;
+                        var picture;
                         if (connection.userid) {
                             id = connection.userid;
                             name = sakai.api.User.getDisplayName(connection);
-                            linkTitle = sakai.api.i18n.General.getValueForKey("VIEW_USERS_PROFILE").replace("{user}", name);
+                            linkTitle = sakai.api.i18n.getValueForKey("VIEW_USERS_PROFILE").replace("{user}", name);
                             picture = sakai.api.User.getProfilePicture(connection);
                         } else if (connection.groupid) {
                             id = connection.groupid;
                             name = sakai.api.Security.safeOutput(connection["sakai:group-title"]);
-                            linkTitle = sakai.api.i18n.General.getValueForKey("VIEW_USERS_PROFILE").replace("{user}", name);
+                            linkTitle = sakai.api.i18n.getValueForKey("VIEW_USERS_PROFILE").replace("{user}", name);
                             picture = sakai.api.Groups.getProfilePicture(connection);
                         }
                         newjson.connection = {
@@ -187,7 +183,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                             connectionNameLinkTitle: linkTitle,
                             connectionPicture: picture
                         };
-                        $("#recentcontactsnew_recent_connection_container").html(sakai.api.Util.TemplateRenderer("#recentcontactsnew_recent_connection_template", newjson));
+                        sakai.api.Util.TemplateRenderer("#recentcontactsnew_recent_connection_template", newjson, $("#recentcontactsnew_recent_connection_container"));
                         break;
                     }
                 }
@@ -199,7 +195,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
          */
         var getContactInfo = function(newjson){
             newjson.displayName = sakai.api.User.getDisplayName(newjson.profile);
-            newjson.displayNameLinkTitle = sakai.api.i18n.General.getValueForKey("VIEW_USERS_PROFILE").replace("{user}", newjson.displayName);
+            newjson.displayNameLinkTitle = sakai.api.i18n.getValueForKey("VIEW_USERS_PROFILE").replace("{user}", newjson.displayName);
             newjson.profilePicture = sakai.api.User.getProfilePicture(newjson.profile);
             var fname = sakai.api.User.getFirstName(newjson.profile);
             if (fname.substring(fname.length-1, fname.length).toLowerCase() === "s"){
@@ -208,7 +204,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                 fname = fname + "'s";
             }
             newjson.firstName = fname;
-            $(recentcontactsnewItem, rootel).html(sakai.api.Util.TemplateRenderer(recentcontactsnewItemTemplate,newjson));
+            sakai.api.Util.TemplateRenderer(recentcontactsnewItemTemplate,newjson, $(recentcontactsnewItem, rootel));
 
             // get related content for group
             var params = {
@@ -234,7 +230,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                             sakai: sakai
                         };
 
-                        $("#recentcontactsnew_latest_content_container").html(sakai.api.Util.TemplateRenderer("#recentcontactsnew_latest_content_template",item));
+                        sakai.api.Util.TemplateRenderer("#recentcontactsnew_latest_content_template",item, $("#recentcontactsnew_latest_content_container"));
                     }
                 }
             });

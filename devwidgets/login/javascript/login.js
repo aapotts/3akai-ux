@@ -86,9 +86,7 @@ require(["jquery", "sakai/sakai.api.core", "misc/querystring"], function($, saka
                     }
                     // Set the cursor in the username field
                     $("#" + usernameField).focus();
-                }
-                if (sakai.config.Authentication.external !== undefined && sakai.config.Authentication.external.length > 0)
-                {
+                } else {
                     $("#login-external-container").html(sakai.api.Util.TemplateRenderer("login-external-template", sakai.config.Authentication));
                     $(loginExternal).show();
                 }

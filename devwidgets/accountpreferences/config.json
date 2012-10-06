@@ -1,10 +1,15 @@
 {
-    "description":"Account Preferences",
-    "name":"Account Preferences",
     "id":"accountpreferences",
     "personalportal":true,
     "i18n": {
-        "default": "/devwidgets/accountpreferences/bundles/default.properties"
+        "default": {
+            "bundle": "/devwidgets/accountpreferences/bundles/default.properties",
+            "description":"Account preferences",
+            "name":"Account preferences"
+        },
+        "es_ES": { 
+            "bundle": "/devwidgets/accountpreferences/bundles/es_ES.properties"
+        } 
     },
     "type":"core",
     "enabled":true,

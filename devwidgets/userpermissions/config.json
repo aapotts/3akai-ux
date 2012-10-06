@@ -1,16 +1,20 @@
 {
-    "description":        "User Permissions",
     "enabled":            true,
     "groupdashboard":     false,
     "grouppages":         false,
     "hasSettings":        false,
     "i18n": {
-        "default":        "/devwidgets/userpermissions/bundles/default.properties"
+        "default": {
+            "bundle":     "/devwidgets/userpermissions/bundles/default.properties",
+            "name":       "User permissions",
+            "description":"User permissions"
+        },
+        "es_ES": { 
+            "bundle": "/devwidgets/userpermissions/bundles/es_ES.properties"
+        }
     },
     "id":                 "userpermissions",
-    "name":               "User Permissions",
     "personalportal":     false,
-    "showinsakaigoodies": false,
     "type":               "core",
     "url":                "/devwidgets/userpermissions/userpermissions.html",
     "userdashboard":      false,

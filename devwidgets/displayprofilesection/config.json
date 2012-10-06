@@ -1,18 +1,16 @@
 {
-    "userpages": true,
-    "userdashboard": true,
-    "grouppages": false,
-    "groupdashboard": false,
-    "hasSettings": true,
-    "showinsakaigoodies": true,
-    "type": "sakai",
-	"img":"/devwidgets/displayprofilesection/images/displayprofilesection.png",
-    "description":"Profile Section",
-    "name":"Profile Section",
     "id":"displayprofilesection",
+    "type":"core",
+    "enabled":true,
     "i18n": {
-        "default": "/devwidgets/displayprofilesection/bundles/default.properties"
+        "default": {
+            "bundle": "/devwidgets/displayprofilesection/bundles/default.properties",
+            "name": "Profile section",
+            "description": "Show a profile section"
+        },
+        "es_ES": { 
+            "bundle": "/devwidgets/displayprofilesection/bundles/es_ES.properties"
+        }
     },
-    "enabled": true,
     "url":"/devwidgets/displayprofilesection/displayprofilesection.html"
 }

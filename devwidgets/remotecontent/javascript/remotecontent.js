@@ -21,7 +21,7 @@
  * /dev/lib/misc/trimpath.template.js (TrimpathTemplates)
  * /dev/lib/jquery/plugins/jquery.validate.sakai-edited.js (validate)
  */
-/*global $,  get_cookie, Config */
+/*global $, get_cookie, Config */
 
 require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 
@@ -243,7 +243,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
          * Add binding to all the elements
          */
         var addBinding = function(){
-            // this method append http:// or ftp:// or https:// 
+            // this method append http:// or ftp:// or https://
             $.validator.addMethod("appendhttp", function(value, element) {
                 if(value.substring(0,7) !== "http://" &&
                 value.substring(0,6) !== "ftp://" &&
@@ -257,34 +257,26 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                 return true;
             }, "No error message, this is just an appender");
 
-            // FORM VALIDATION 
-            $("#remotecontent_form", rootel).validate({
-                onkeyup: false,
-                errorPlacement: function(error, element){
-                    if (clickSubmit) {
-                        sakai.api.Util.notification.show($(remotecontentTitle, rootel).html(), $(error, rootel).html());
-                        clickSubmit = false;
-                    }
-                }
-            });
-        
-            // define rules for the url
-            $(remotecontentSettingsUrl, rootel).rules("add", {
-                required: true,
-                url: true,
+            // FORM VALIDATION
+
+            var validateOpts = {
+                onclick: true,
+                onkeyup: true,
+                onfocusout: true,
                 messages: {
                     required: $(remotecontentSettingsUrlBlank).html(),
                     url: $(remotecontentSettingsUrlError).html()
-                }
-            });
-
-            // Change the url for the iFrame
-            $(remotecontentSettingsUrl, rootel).change(function(){
-                var urlValue = $(this).val();
-                if ($("#remotecontent_form", rootel).valid()) {
+                },
+                success: function() {
                     renderIframeSettings(true);
+                },
+                invalidCallback: function() {
+                    renderIframeSettings(false);
                 }
-            });
+            };
+
+            // Initialize the validate plug-in
+            sakai.api.Util.Forms.validate($("#remotecontent_form", rootel), validateOpts, true);
 
             // Change the iframe width
             $(remotecontentSettingsWidth, rootel).change(function(){
@@ -307,12 +299,13 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
             });
 
             // Change the border width
-            $(remotecontentSettingsBorders, rootel).change(function(){
-                var borderValue = $(remotecontentSettingsBorders, rootel).val();
-                if (isDecimal(borderValue)) {
-                    json.border_size = borderValue;
-                    renderIframeSettings(false);
+            $(remotecontentSettingsBorders, rootel).on('click', function() {
+                if ($(remotecontentSettingsBorders, rootel).is(':checked')) {
+                    json.border_size = 2;
+                } else {
+                    json.border_size = 0;
                 }
+                renderIframeSettings(false);
             });
 
             // Toggle the advanced view
@@ -332,16 +325,14 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
             });
 
             // When you click on one of the width units (px or percentage)
-            $(remotecontentSettingsWidthUnitClass, rootel).click(function(){
-                var widthUnitValue = $(this).attr("id").split("_")[$(this).attr("id").split("_").length - 1];
+            $(remotecontentSettingsWidthUnitClass, rootel).on('change', function() {
+                var widthUnitValue = $(this).val();
                 if (widthUnitValue === "px") {
                     json.width_unit = widthUnitValue;
                 }
                 else {
                     json.width_unit = "%";
                 }
-                $(remotecontentSettingsWidthUnitClass, rootel).removeClass(remotecontentSettingsWidthUnitSelectedClass);
-                $(this).addClass(remotecontentSettingsWidthUnitSelectedClass);
                 renderIframeSettings(false);
             });
 
@@ -369,7 +360,11 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
          * @param {Boolean} exists Does there exist a previous remotecontent
          */
         var displaySettings = function(parameters, exists){
-            if (exists && parameters.url) {
+            /**
+             * We also blank the URL field if it matches the default URL in widget config,
+             * i.e. if it's the default path to user instructions.
+             */
+            if (exists && parameters.url && parameters.url !== sakai.widgets.remotecontent.defaultConfiguration.remotecontent.url) {               
                 json = parameters;
             }
             else {
@@ -413,7 +408,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                 sakai.api.Widgets.loadWidgetData(tuid, processRemoteContent);
             }
         };
-  
+
         var processRemoteContent = function(success, data){
             if (success) {
                 // Get a JSON string that contains the necessary information.
